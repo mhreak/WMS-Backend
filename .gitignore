@@ -1,0 +1,262 @@
+# =========================================================
+# ASP.NET Core / .NET / Visual Studio / VS Code / Rider
+# =========================================================
+
+
+############################
+# Build Results
+############################
+
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+[Ww][Ii][Nn]32/
+
+bld/
+[Oo]ut/
+artifacts/
+
+msbuild.log
+msbuild.err
+msbuild.wrn
+
+
+############################
+# Visual Studio
+############################
+
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+*.tlog
+*.rsuser
+
+
+############################
+# VS Code
+############################
+
+.vscode/
+
+# If you want to keep shared VS Code settings,
+# remove the line above and use these instead:
+# .vscode/*
+# !.vscode/settings.json
+# !.vscode/tasks.json
+# !.vscode/launch.json
+# !.vscode/extensions.json
+
+
+############################
+# Rider / JetBrains
+############################
+
+.idea/
+*.sln.iml
+*.DotSettings.user
+
+
+############################
+# NuGet
+############################
+
+*.nupkg
+*.snupkg
+
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+
+*.nuget.props
+*.nuget.targets
+
+project.lock.json
+project.fragment.lock.json
+
+.nuget/
+
+
+############################
+# ASP.NET Core
+############################
+
+# Local configuration
+appsettings.Development.json
+appsettings.Local.json
+appsettings.*.local.json
+
+# Publishing
+*.pubxml
+*.pubxml.user
+*.publishproj
+PublishProfiles/
+
+# Frontend build output
+wwwroot/dist/
+wwwroot/lib/
+
+# General publish folders
+**/publish/
+
+
+############################
+# Environment / Secrets
+############################
+
+.env
+.env.local
+.env.*.local
+.env.*
+
+# Keep example environment file
+!.env.example
+
+# Secret/key folders
+ChngpssKeys/
+**/ChngpssKeys/
+
+# Secret configuration files
+secrets.json
+**/appsettings.Secrets.json
+
+
+############################
+# Logs
+############################
+
+*.log
+logs/
+Logs/
+
+
+############################
+# Test Results
+############################
+
+[Tt]est[Rr]esult*/
+TestResults/
+
+[Bb]uild[Ll]og.*
+
+*.trx
+*.coverage
+*.coveragexml
+
+coverage/
+
+
+############################
+# OS Generated Files
+############################
+
+.DS_Store
+.DS_Store?
+._*
+
+.Spotlight-V100
+.Trashes
+
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+
+############################
+# Node / Frontend
+############################
+
+node_modules/
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+dist/
+
+ClientApp/node_modules/
+
+
+############################
+# Docker
+############################
+
+*.env
+docker-compose.override.yml
+
+
+############################
+# Database Files
+############################
+
+*.mdf
+*.ldf
+*.ndf
+
+*.db
+*.sqlite
+*.sqlite3
+
+
+############################
+# Temporary / Cache Files
+############################
+
+*.cache
+*.tmp
+*.temp
+*.bak
+*.swp
+*~
+
+*.dmp
+
+
+############################
+# Uploads / User Generated Files
+############################
+
+**/wwwroot/uploads/
+**/uploads/
+
+
+############################
+# Seeders
+############################
+
+# IMPORTANT:
+# Seed data is normally tracked.
+# Do NOT ignore all JSON files here unless
+# you intentionally keep seed data outside Git.
+
+# Example if a specific huge generated seed file
+# should NOT be tracked:
+# **/Seeders/Data/cities.json
+
+
+############################
+# Git
+############################
+
+# Never track Git internals
+.git/
+
+
+############################
+# Miscellaneous
+############################
+
+*.pid
+*.pid.lock
+
+**/Seeders/Data/cities.json
+**/Seeders/Data/cities.json
