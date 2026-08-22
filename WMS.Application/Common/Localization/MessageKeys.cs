@@ -157,5 +157,28 @@ public const string ContractTypeStateDeleted = "ContractTypeStateDeleted";
 public const string ContractTypeStateStatusToggled = "ContractTypeStateStatusToggled";
 public const string ContractTypeStateNotFound = "ContractTypeStateNotFound";
 public const string ContractTypeStateTitleAlreadyExists = "ContractTypeStateTitleAlreadyExists";
+// ExtraOrDeductionType
+public const string ExtraOrDeductionTypeNotFound = "ExtraOrDeductionTypeNotFound";
+public const string ExtraOrDeductionTypeCreated = "ExtraOrDeductionTypeCreated";
+public const string ExtraOrDeductionTypeUpdated = "ExtraOrDeductionTypeUpdated";
+public const string ExtraOrDeductionTypeDeleted = "ExtraOrDeductionTypeDeleted";
+public const string ExtraOrDeductionTypesRetrieved = "ExtraOrDeductionTypesRetrieved";
+
+// ExtraOrDeductionRule
+public const string ExtraOrDeductionRuleNotFound = "ExtraOrDeductionRuleNotFound";
+public const string ExtraOrDeductionRuleCreated = "ExtraOrDeductionRuleCreated";
+public const string ExtraOrDeductionRuleUpdated = "ExtraOrDeductionRuleUpdated";
+public const string ExtraOrDeductionRuleDeleted = "ExtraOrDeductionRuleDeleted";
+public const string ExtraOrDeductionRulesRetrieved = "ExtraOrDeductionRulesRetrieved";
+public const string ContractTypeNotFoundForRule = "ContractTypeNotFoundForRule";
+
+// ContractorStatement
+public const string ContractorStatementNotFound = "ContractorStatementNotFound";
+public const string ContractorStatementCreated = "ContractorStatementCreated";
+public const string ContractorStatementUpdated = "ContractorStatementUpdated";
+public const string ContractorStatementDeleted = "ContractorStatementDeleted";
+public const string ContractorStatementsRetrieved = "ContractorStatementsRetrieved";
+public const string ContractorStatementExtraOrDeductionsSet = "ContractorStatementExtraOrDeductionsSet";
+public const string ExtraOrDeductionRuleNotFoundInSet = "ExtraOrDeductionRuleNotFoundInSet";
 
 }

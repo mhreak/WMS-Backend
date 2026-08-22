@@ -19,6 +19,8 @@ using WMS.Application.Administrator.Labels.Interfaces;
 using WMS.Application.Administrator.Attachments.Interfaces;
 using WMS.Application.Administrator.ContractTypes.Interfaces;
 using WMS.Application.Administrator.Contracts.Interfaces;
+using WMS.Application.Administrator.Statements.Interfaces;
+using WMS.Persistence.Repositories.Statements;
 
 
 
@@ -66,6 +68,10 @@ public static class CoreRepositoryDependencyInjection
         services.AddScoped<IEntityAttachmentRepository, EntityAttachmentRepository>();
         services.AddScoped<IStepRepository, StepRepository>();
         services.AddScoped<IContractTypeStateRepository, ContractTypeStateRepository>();
+        services.AddScoped<IExtraOrDeductionTypeRepository, ExtraOrDeductionTypeRepository>();
+        services.AddScoped<IExtraOrDeductionRuleRepository, ExtraOrDeductionRuleRepository>();
+        services.AddScoped<IContractorStatementRepository, ContractorStatementRepository>();
+
 
 
         return services;

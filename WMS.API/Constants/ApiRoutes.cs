@@ -24,6 +24,9 @@ public static class ApiRoutes
         public const string EntityAttachments = $"{AdminBase}/entity-attachments";
         public const string ContractTypeSteps = $"{AdminBase}/contract-type-steps";
         public const string ContractTypeStates = $"{AdminBase}/contract-type-states";
+        public const string ExtraOrDeductionTypes = $"{AdminBase}/extra-or-deduction-types";
+        public const string ExtraOrDeductionRules = $"{AdminBase}/extra-or-deduction-rules";
+        public const string ContractorStatements = $"{AdminBase}/contractor-statements";
 
 
 

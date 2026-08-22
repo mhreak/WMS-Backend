@@ -144,7 +144,25 @@
   "ContractTypeStateDeleted": "وضعیت نوع قرارداد حذف شد.",
   "ContractTypeStateStatusToggled": "وضعیت فعال/غیرفعال تغییر کرد.",
   "ContractTypeStateNotFound": "وضعیت نوع قرارداد یافت نشد.",
-  "ContractTypeStateTitleAlreadyExists": "عنوان وضعیت قبلاً ثبت شده است."
+  "ContractTypeStateTitleAlreadyExists": "عنوان وضعیت قبلاً ثبت شده است.",
+  "ExtraOrDeductionTypeNotFound": "نوع اضافه/کسر یافت نشد.",
+"ExtraOrDeductionTypeCreated": "نوع اضافه/کسر با موفقیت ایجاد شد.",
+"ExtraOrDeductionTypeUpdated": "نوع اضافه/کسر با موفقیت ویرایش شد.",
+"ExtraOrDeductionTypeDeleted": "نوع اضافه/کسر حذف شد.",
+"ExtraOrDeductionTypesRetrieved": "لیست انواع اضافه/کسر دریافت شد.",
+"ExtraOrDeductionRuleNotFound": "قانون اضافه/کسر یافت نشد.",
+"ExtraOrDeductionRuleCreated": "قانون با موفقیت ایجاد شد.",
+"ExtraOrDeductionRuleUpdated": "قانون با موفقیت ویرایش شد.",
+"ExtraOrDeductionRuleDeleted": "قانون حذف شد.",
+"ExtraOrDeductionRulesRetrieved": "لیست قوانین دریافت شد.",
+"ContractTypeNotFoundForRule": "نوع قرارداد انتخاب‌شده برای این قانون یافت نشد.",
+"ContractorStatementNotFound": "صورت‌وضعیت یافت نشد.",
+"ContractorStatementCreated": "صورت‌وضعیت با موفقیت ثبت شد.",
+"ContractorStatementUpdated": "صورت‌وضعیت با موفقیت ویرایش شد.",
+"ContractorStatementDeleted": "صورت‌وضعیت حذف شد.",
+"ContractorStatementsRetrieved": "لیست صورت‌وضعیت‌ها دریافت شد.",
+"ContractorStatementExtraOrDeductionsSet": "اقلام اضافه/کسر صورت‌وضعیت ثبت شد.",
+"ExtraOrDeductionRuleNotFoundInSet": "یکی از قوانین انتخاب‌شده یافت نشد."
 
 
 

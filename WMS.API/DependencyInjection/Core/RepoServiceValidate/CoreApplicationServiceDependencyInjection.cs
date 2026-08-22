@@ -14,6 +14,8 @@ using WMS.Application.Administrator.Steps.Interfaces;
 using WMS.Application.Administrator.ContractTypeSteps.Services;
 using WMS.Application.Administrator.ContractTypeStates.Interfaces;
 using WMS.Application.Administrator.ContractTypeStates.Services;
+using WMS.Application.Administrator.Statements.Interfaces;
+using WMS.Application.Administrator.Statements.Services;
 
 namespace WMS.API.DependencyInjection;
 
@@ -34,6 +36,9 @@ public static class CoreApplicationServiceDependencyInjection
         services.AddScoped<IEntityAttachmentService, EntityAttachmentService>();
         services.AddScoped<IStepService, StepService>();
         services.AddScoped<IContractTypeStateService, ContractTypeStateService>();
+        services.AddScoped<IExtraOrDeductionTypeService, ExtraOrDeductionTypeService>();
+        services.AddScoped<IExtraOrDeductionRuleService, ExtraOrDeductionRuleService>();
+        services.AddScoped<IContractorStatementService, ContractorStatementService>();
         return services;
     }
 }
