@@ -127,7 +127,8 @@
   "ContractTypeStateDeleted": "Contract type state deleted successfully.",
   "ContractTypeStateStatusToggled": "Contract type state status toggled.",
   "ContractTypeStateNotFound": "Contract type state not found.",
-  "ContractTypeStateTitleAlreadyExists": "Contract type state title already exists."
+  "ContractTypeStateTitleAlreadyExists": "Contract type state title already exists.",
+  "MandatoryStepCannotBeMoved": "This step is mandatory and cannot be moved directly via drag & drop."
 
 
 

@@ -14,6 +14,8 @@ public class ContractTypeStep : BaseEntity
 
     public bool IsActive { get; set; } = true;
 
+    public bool IsMandatory { get; set; }
+
     [Required]
     public short StepOrder { get; set; }
 

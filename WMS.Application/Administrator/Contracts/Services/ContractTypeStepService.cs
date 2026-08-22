@@ -59,6 +59,7 @@ public class StepService : IStepService
             IsActive = request.IsActive,
             StepOrder = request.StepOrder,
             ContractTypeId = request.ContractTypeId,
+            IsMandatory = request.IsMandatory,
             CreatedAt = DateTime.UtcNow
         };
 
@@ -82,6 +83,7 @@ public class StepService : IStepService
         entity.Title = request.Title.Trim();
         entity.IsActive = request.IsActive;
         entity.ContractTypeId = request.ContractTypeId;
+        entity.IsMandatory = request.IsMandatory;
         entity.StepOrder = request.StepOrder;
 
         await _repo.UpdateAsync(entity, ct);
@@ -117,6 +119,7 @@ public class StepService : IStepService
         Id = entity.Id,
         Title = entity.Title,
         IsActive = entity.IsActive,
+        IsMandatory = entity.IsMandatory,
         StepOrder = entity.StepOrder,
         ContractTypeId = entity.ContractTypeId,
         ContractTypeTitle = entity.ContractType?.Title,

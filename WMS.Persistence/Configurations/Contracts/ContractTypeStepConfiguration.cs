@@ -16,6 +16,7 @@ public class ContractTypeStepConfiguration : IEntityTypeConfiguration<ContractTy
 
         builder.Property(x => x.Title).IsRequired().HasMaxLength(200);
         builder.Property(x => x.StepOrder).IsRequired();
+        builder.Property(x => x.IsMandatory).IsRequired().HasDefaultValue(false);
 
         builder.HasOne(x => x.ContractType)
             .WithMany(ct => ct.Steps)

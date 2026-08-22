@@ -181,4 +181,6 @@ public const string ContractorStatementsRetrieved = "ContractorStatementsRetriev
 public const string ContractorStatementExtraOrDeductionsSet = "ContractorStatementExtraOrDeductionsSet";
 public const string ExtraOrDeductionRuleNotFoundInSet = "ExtraOrDeductionRuleNotFoundInSet";
 
+public const string MandatoryStepCannotBeMoved = "MandatoryStepCannotBeMoved";
+
 }

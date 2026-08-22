@@ -204,10 +204,13 @@ public async Task MoveStepAsync(
 
     if (current != null)
     {
-        if (current.StepId == request.TargetStepId)
-            return;
+         if (current.StepId == request.TargetStepId)
+        return;
 
-        current.FinishDate = finishedDate;
+    if (current.Step != null && current.Step.IsMandatory)
+        throw new BadRequestException(MessageKeys.MandatoryStepCannotBeMoved);
+
+    current.FinishDate = finishedDate;
     }
 
     var hasActiveTarget = await _db.Contract_ContractTypeStep

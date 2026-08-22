@@ -162,7 +162,8 @@
 "ContractorStatementDeleted": "صورت‌وضعیت حذف شد.",
 "ContractorStatementsRetrieved": "لیست صورت‌وضعیت‌ها دریافت شد.",
 "ContractorStatementExtraOrDeductionsSet": "اقلام اضافه/کسر صورت‌وضعیت ثبت شد.",
-"ExtraOrDeductionRuleNotFoundInSet": "یکی از قوانین انتخاب‌شده یافت نشد."
+"ExtraOrDeductionRuleNotFoundInSet": "یکی از قوانین انتخاب‌شده یافت نشد.",
+"MandatoryStepCannotBeMoved": "این مرحله اجباری است و امکان جابجایی مستقیم آن با درگ و دراپ وجود ندارد."
 
 
 

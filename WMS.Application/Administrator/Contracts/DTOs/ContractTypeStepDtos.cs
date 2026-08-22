@@ -6,9 +6,11 @@ public class CreateStepRequest
     public string Title { get; set; } = string.Empty;
     public bool IsActive { get; set; } = true;
     public byte StepOrder { get; set; }
+    public bool IsMandatory { get; set; }
     public Guid ContractTypeId { get; set; }
     public Guid? StartStateId { get; set; }
     public Guid? EndStateId { get; set; }
+
     public string StartStateTitle { get; set; } = string.Empty;
     public string EndStateTitle { get; set; } = string.Empty;
 }
@@ -18,6 +20,7 @@ public class UpdateStepRequest
     public string Title { get; set; } = string.Empty;
     public bool IsActive { get; set; }
     public byte StepOrder { get; set; }
+     public bool IsMandatory { get; set; }
     public Guid ContractTypeId { get; set; }
     public Guid? StartStateId { get; set; }
     public Guid? EndStateId { get; set; }
@@ -31,6 +34,7 @@ public class StepDto
     public string Title { get; set; } = string.Empty;
     public bool IsActive { get; set; }
     public short StepOrder { get; set; }
+    public bool IsMandatory { get; set; }
     public Guid ContractTypeId { get; set; }
     public string? ContractTypeTitle { get; set; }
     public DateTime CreatedAt { get; set; }

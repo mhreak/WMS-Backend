@@ -1,9 +1,12 @@
+using Microsoft.Extensions.Configuration;
+using WMS.Application.Administrator.Attachments.Interfaces;
 using WMS.Application.Administrator.Statements.DTOs;
 using WMS.Application.Administrator.Statements.Interfaces;
 using WMS.Application.Common.Exceptions;
 using WMS.Application.Common.Interfaces;
 using WMS.Application.Common.Localization;
 using WMS.Application.Common.Pagination;
+using WMS.Domain.Entities.Attachments;
 using WMS.Domain.Entities.Statements;
 
 namespace WMS.Application.Administrator.Statements.Services;
@@ -11,12 +14,20 @@ namespace WMS.Application.Administrator.Statements.Services;
 public class ContractorStatementService : IContractorStatementService
 {
     private readonly IContractorStatementRepository _repo;
+    private readonly IEntityAttachmentRepository _attachmentRepo;
+    private readonly string _rootPath;
+
     private readonly IUnitOfWork _uow;
 
-    public ContractorStatementService(IContractorStatementRepository repo, IUnitOfWork uow)
+    public ContractorStatementService(  IContractorStatementRepository repo,
+        IEntityAttachmentRepository attachmentRepo,
+        IUnitOfWork uow,
+        IConfiguration configuration)
     {
         _repo = repo;
+        _attachmentRepo = attachmentRepo;
         _uow = uow;
+        _rootPath = configuration["Storage:RootPath"] ?? "uploads";
     }
 
     public async Task<PagedResult<ContractorStatementDto>> GetListAsync(ContractorStatementFilterRequest filter, CancellationToken ct = default)
@@ -43,7 +54,7 @@ public class ContractorStatementService : IContractorStatementService
             ContractId = request.ContractId,
             ContractTypeStepId = request.ContractTypeStepId,
             StatementDate = request.StatementDate,
-            FileName = request.FileName.Trim(),
+            FileId = request.FileId,
             Amount = request.Amount,
             Description = request.Description?.Trim(),
             CreatedAt = DateTime.UtcNow
@@ -64,7 +75,7 @@ public class ContractorStatementService : IContractorStatementService
 
         entity.ContractTypeStepId = request.ContractTypeStepId;
         entity.StatementDate = request.StatementDate;
-        entity.FileName = request.FileName.Trim();
+        entity.FileId = request.FileId;
         entity.Amount = request.Amount;
         entity.Description = request.Description?.Trim();
 
@@ -114,38 +125,48 @@ public class ContractorStatementService : IContractorStatementService
             ?? throw new NotFoundException(MessageKeys.ContractorStatementNotFound);
         return MapToDto(updated);
     }
-
-    private static ContractorStatementDto MapToDto(ContractorStatement e)
-    {
-        var items = e.ExtraOrDeductions
-            .Where(i => !i.IsDeleted)
-            .Select(i => new StatementExtraOrDeductionItemDto
-            {
-                Id = i.Id,
-                RuleId = i.RuleId,
-                RuleTitle = i.Rule?.ExtraOrDeductionType?.Title,
-                IsExtra = i.Rule?.ExtraOrDeductionType?.IsExtra ?? false,
-                Amount = i.Amount
-            }).ToList();
-
-        var netAmount = e.Amount
-            + items.Where(i => i.IsExtra).Sum(i => i.Amount)
-            - items.Where(i => !i.IsExtra).Sum(i => i.Amount);
-
-        return new ContractorStatementDto
+    private string BuildAttachmentPath(EntityAttachment attachment)
         {
-            Id = e.Id,
-            ContractId = e.ContractId,
-            ContractTitle = e.Contract?.Title,
-            ContractTypeStepId = e.ContractTypeStepId,
-            ContractTypeStepTitle = e.ContractTypeStep?.Title,
-            StatementDate = e.StatementDate,
-            FileName = e.FileName,
-            Amount = e.Amount,
-            Description = e.Description,
-            ExtraOrDeductions = items,
-            NetAmount = netAmount,
-            CreatedAt = e.CreatedAt
-        };
-    }
+            var root = Path.IsPathRooted(_rootPath) ? _rootPath : Path.GetFullPath(_rootPath);
+            return Path.Combine(root, attachment.EntityId.ToString("N"), attachment.FileName);
+        }
+    
+    private static string BuildAttachmentUrl(EntityAttachment attachment)
+    => $"/uploads/{attachment.EntityId:N}/{attachment.FileName}";
+
+    private ContractorStatementDto MapToDto(ContractorStatement e)
+{
+    var items = e.ExtraOrDeductions
+        .Where(i => !i.IsDeleted)
+        .Select(i => new StatementExtraOrDeductionItemDto
+        {
+            Id = i.Id,
+            RuleId = i.RuleId,
+            RuleTitle = i.Rule?.ExtraOrDeductionType?.Title,
+            IsExtra = i.Rule?.ExtraOrDeductionType?.IsExtra ?? false,
+            Amount = i.Amount
+        }).ToList();
+
+    var netAmount = e.Amount
+        + items.Where(i => i.IsExtra).Sum(i => i.Amount)
+        - items.Where(i => !i.IsExtra).Sum(i => i.Amount);
+
+    return new ContractorStatementDto
+    {
+        Id = e.Id,
+        ContractId = e.ContractId,
+        ContractTitle = e.Contract?.Title,
+        ContractTypeStepId = e.ContractTypeStepId,
+        ContractTypeStepTitle = e.ContractTypeStep?.Title,
+        StatementDate = e.StatementDate,
+        FileId = e.FileId,
+        FileName = e.Attachment?.FileName,
+        FilePath = e.Attachment != null ? BuildAttachmentUrl(e.Attachment) : null,
+        Amount = e.Amount,
+        Description = e.Description,
+        ExtraOrDeductions = items,
+        NetAmount = netAmount,
+        CreatedAt = e.CreatedAt
+    };
+}
 }

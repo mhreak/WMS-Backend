@@ -9,7 +9,6 @@ public class CreateContractorStatementRequestValidator : AbstractValidator<Creat
     {
         RuleFor(x => x.ContractId).NotEmpty().WithMessage("قرارداد الزامی است.");
         RuleFor(x => x.ContractTypeStepId).NotEmpty().WithMessage("مرحله الزامی است.");
-        RuleFor(x => x.FileName).NotEmpty().WithMessage("نام فایل الزامی است.").MaximumLength(500);
         RuleFor(x => x.Amount).GreaterThan(0).WithMessage("مبلغ باید بزرگ‌تر از صفر باشد.");
     }
 }
@@ -19,7 +18,6 @@ public class UpdateContractorStatementRequestValidator : AbstractValidator<Updat
     public UpdateContractorStatementRequestValidator()
     {
         RuleFor(x => x.ContractTypeStepId).NotEmpty().WithMessage("مرحله الزامی است.");
-        RuleFor(x => x.FileName).NotEmpty().WithMessage("نام فایل الزامی است.").MaximumLength(500);
         RuleFor(x => x.Amount).GreaterThan(0).WithMessage("مبلغ باید بزرگ‌تر از صفر باشد.");
     }
 }

@@ -13,7 +13,6 @@ public class ContractorStatementConfiguration : IEntityTypeConfiguration<Contrac
         builder.Property(x => x.Id).ValueGeneratedNever();
 
         builder.Property(x => x.StatementDate).IsRequired();
-        builder.Property(x => x.FileName).IsRequired().HasMaxLength(500);
         builder.Property(x => x.Amount).IsRequired();
         builder.Property(x => x.Description).HasMaxLength(1000);
 
@@ -27,8 +26,14 @@ public class ContractorStatementConfiguration : IEntityTypeConfiguration<Contrac
             .HasForeignKey(x => x.ContractTypeStepId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        builder.HasOne(x => x.Attachment)
+            .WithMany()
+            .HasForeignKey(x => x.FileId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.HasIndex(x => x.ContractId);
         builder.HasIndex(x => x.ContractTypeStepId);
+        builder.HasIndex(x => x.FileId);
         builder.HasIndex(x => x.IsDeleted);
     }
 }

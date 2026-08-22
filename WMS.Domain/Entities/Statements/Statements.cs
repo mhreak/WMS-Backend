@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using WMS.Domain.Common;
+using WMS.Domain.Entities.Attachments;
 using WMS.Domain.Entities.Contracts;
 using WMS.Domain.Entities.ContractTypes;
 
@@ -22,8 +23,9 @@ public class ContractorStatement : BaseEntity
     public DateOnly StatementDate { get; set; }
 
     [Required]
-    [MaxLength(500)]
-    public string FileName { get; set; } = string.Empty;
+    public Guid FileId { get; set; }
+    [ForeignKey(nameof(FileId))]
+    public virtual EntityAttachment Attachment { get; set; } = null!;
 
     [Required]
     public long Amount { get; set; }
