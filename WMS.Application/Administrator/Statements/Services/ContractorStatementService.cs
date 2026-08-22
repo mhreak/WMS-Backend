@@ -54,7 +54,7 @@ public class ContractorStatementService : IContractorStatementService
             ContractId = request.ContractId,
             ContractTypeStepId = request.ContractTypeStepId,
             StatementDate = request.StatementDate,
-            FileId = request.FileId,
+            FileId = request.FileId?? null,
             Amount = request.Amount,
             Description = request.Description?.Trim(),
             CreatedAt = DateTime.UtcNow
@@ -75,7 +75,7 @@ public class ContractorStatementService : IContractorStatementService
 
         entity.ContractTypeStepId = request.ContractTypeStepId;
         entity.StatementDate = request.StatementDate;
-        entity.FileId = request.FileId;
+        entity.FileId = request.FileId?? entity.FileId;
         entity.Amount = request.Amount;
         entity.Description = request.Description?.Trim();
 

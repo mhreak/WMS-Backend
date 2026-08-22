@@ -22,8 +22,7 @@ public class ContractorStatement : BaseEntity
     [Required]
     public DateOnly StatementDate { get; set; }
 
-    [Required]
-    public Guid FileId { get; set; }
+    public Guid? FileId { get; set; }
     [ForeignKey(nameof(FileId))]
     public virtual EntityAttachment Attachment { get; set; } = null!;
 

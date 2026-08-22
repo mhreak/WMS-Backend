@@ -5,7 +5,7 @@ public class CreateContractorStatementRequest
     public Guid ContractId { get; set; }
     public Guid ContractTypeStepId { get; set; }
     public DateOnly StatementDate { get; set; }
-    public Guid FileId { get; set; }
+    public Guid? FileId { get; set; }
     public long Amount { get; set; }
     public string? Description { get; set; }
 }
@@ -14,7 +14,7 @@ public class UpdateContractorStatementRequest
 {
     public Guid ContractTypeStepId { get; set; }
     public DateOnly StatementDate { get; set; }
-    public Guid FileId { get; set; }
+    public Guid? FileId { get; set; }
     public long Amount { get; set; }
     public string? Description { get; set; }
 }
@@ -55,7 +55,7 @@ public class ContractorStatementDto
     public string? ContractTypeStepTitle { get; set; }
     public DateOnly StatementDate { get; set; }
 
-    public Guid FileId { get; set; }
+    public Guid? FileId { get; set; }
     public string? FileName { get; set; }
     public string? FilePath { get; set; }
 
