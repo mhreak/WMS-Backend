@@ -9,6 +9,7 @@ using WMS.Domain.Entities.Labels;
 using WMS.Domain.Entities.Attachments;
 using WMS.Domain.Entities.ContractTypes;
 using WMS.Domain.Entities.Contracts;
+using WMS.Domain.Entities.Statements;
 
 
 namespace WMS.Persistence.Context;
@@ -34,6 +35,10 @@ public class AppDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
     public DbSet<ContractStep> Contract_ContractTypeStep => Set<ContractStep>();
     public DbSet<ContractCategory> ContractCategory => Set<ContractCategory>();
     public DbSet<ContractTypeState> ContractTypeStates => Set<ContractTypeState>();
+    public DbSet<ContractorStatement> ContractorStatement => Set<ContractorStatement>();
+    public DbSet<ExtraOrDeductionType> ExtraOrDeductionType => Set<ExtraOrDeductionType>();
+    public DbSet<ExtraOrDeductionRule> ExtraOrDeductionRule => Set<ExtraOrDeductionRule>();
+    public DbSet<ContractorStatementExtraOrDeduction> ContractorStatementExtraOrDeduction => Set<ContractorStatementExtraOrDeduction>();
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
