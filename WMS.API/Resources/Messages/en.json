@@ -119,7 +119,15 @@
   "ContractorCategoryDeleted": "Contractor category deleted successfully.",
   "CategoryParentNotFound": "Parent category not found.",
 "CategoryCannotBeOwnParent": "A category cannot be its own parent.",
-"CategoryCircularParent": "This selection would create a circular category hierarchy."
+"CategoryCircularParent": "This selection would create a circular category hierarchy.",
+"ContractTypeStatesRetrieved": "Contract type states retrieved successfully.",
+  "ContractTypeStateRetrieved": "Contract type state retrieved successfully.",
+  "ContractTypeStateCreated": "Contract type state created successfully.",
+  "ContractTypeStateUpdated": "Contract type state updated successfully.",
+  "ContractTypeStateDeleted": "Contract type state deleted successfully.",
+  "ContractTypeStateStatusToggled": "Contract type state status toggled.",
+  "ContractTypeStateNotFound": "Contract type state not found.",
+  "ContractTypeStateTitleAlreadyExists": "Contract type state title already exists."
 
 
 

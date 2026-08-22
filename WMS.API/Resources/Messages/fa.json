@@ -136,7 +136,15 @@
   "StepOrderAlreadyExists": "ترتیب این مرحله برای این نوع قرارداد قبلاً ثبت شده است.",
   "CategoryParentNotFound": "دسته‌بندی والد یافت نشد.",
 "CategoryCannotBeOwnParent": "یک دسته‌بندی نمی‌تواند والد خودش باشد.",
-"CategoryCircularParent": "این انتخاب باعث ایجاد حلقه در سلسله‌مراتب دسته‌بندی می‌شود."
+"CategoryCircularParent": "این انتخاب باعث ایجاد حلقه در سلسله‌مراتب دسته‌بندی می‌شود.",
+"ContractTypeStatesRetrieved": "لیست وضعیت‌های نوع قرارداد دریافت شد.",
+  "ContractTypeStateRetrieved": "وضعیت نوع قرارداد دریافت شد.",
+  "ContractTypeStateCreated": "وضعیت نوع قرارداد ایجاد شد.",
+  "ContractTypeStateUpdated": "وضعیت نوع قرارداد به‌روزرسانی شد.",
+  "ContractTypeStateDeleted": "وضعیت نوع قرارداد حذف شد.",
+  "ContractTypeStateStatusToggled": "وضعیت فعال/غیرفعال تغییر کرد.",
+  "ContractTypeStateNotFound": "وضعیت نوع قرارداد یافت نشد.",
+  "ContractTypeStateTitleAlreadyExists": "عنوان وضعیت قبلاً ثبت شده است."
 
 
 

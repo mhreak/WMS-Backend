@@ -29,6 +29,8 @@ using WMS.Persistence.Repositories.ContractTypes;
 using WMS.Persistence.Repositories.Contracts;
 using WMS.Application.Administrator.ContractTypeSteps.Interfaces;
 using WMS.Persistence.Repositories.ContractTypeSteps;
+using WMS.Application.Administrator.ContractTypeStates.Interfaces;
+using WMS.Persistence.Repositories.ContractTypeStates;
 
 
 namespace WMS.API.DependencyInjection;
@@ -63,6 +65,7 @@ public static class CoreRepositoryDependencyInjection
         services.AddScoped<IAttachmentTypeRepository, AttachmentTypeRepository>();
         services.AddScoped<IEntityAttachmentRepository, EntityAttachmentRepository>();
         services.AddScoped<IStepRepository, StepRepository>();
+        services.AddScoped<IContractTypeStateRepository, ContractTypeStateRepository>();
 
 
         return services;

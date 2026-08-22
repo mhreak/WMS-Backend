@@ -23,6 +23,7 @@ public static class ApiRoutes
         public const string AttachmentTypes = $"{AdminBase}/attachment-types";
         public const string EntityAttachments = $"{AdminBase}/entity-attachments";
         public const string ContractTypeSteps = $"{AdminBase}/contract-type-steps";
+        public const string ContractTypeStates = $"{AdminBase}/contract-type-states";
 
 
 

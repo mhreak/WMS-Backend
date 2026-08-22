@@ -149,4 +149,13 @@ public const string CategoryParentNotFound = "CategoryParentNotFound";
 public const string CategoryCannotBeOwnParent = "CategoryCannotBeOwnParent";
 public const string CategoryCircularParent = "CategoryCircularParent";
 
+public const string ContractTypeStatesRetrieved = "ContractTypeStatesRetrieved";
+public const string ContractTypeStateRetrieved = "ContractTypeStateRetrieved";
+public const string ContractTypeStateCreated = "ContractTypeStateCreated";
+public const string ContractTypeStateUpdated = "ContractTypeStateUpdated";
+public const string ContractTypeStateDeleted = "ContractTypeStateDeleted";
+public const string ContractTypeStateStatusToggled = "ContractTypeStateStatusToggled";
+public const string ContractTypeStateNotFound = "ContractTypeStateNotFound";
+public const string ContractTypeStateTitleAlreadyExists = "ContractTypeStateTitleAlreadyExists";
+
 }
