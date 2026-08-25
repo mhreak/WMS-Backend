@@ -163,7 +163,11 @@
 "ContractorStatementsRetrieved": "لیست صورت‌وضعیت‌ها دریافت شد.",
 "ContractorStatementExtraOrDeductionsSet": "اقلام اضافه/کسر صورت‌وضعیت ثبت شد.",
 "ExtraOrDeductionRuleNotFoundInSet": "یکی از قوانین انتخاب‌شده یافت نشد.",
-"MandatoryStepCannotBeMoved": "این مرحله اجباری است و امکان جابجایی مستقیم آن با درگ و دراپ وجود ندارد."
+"MandatoryStepCannotBeMoved": "این مرحله اجباری است و امکان جابجایی مستقیم آن با درگ و دراپ وجود ندارد.",
+"DeadlineAlarmNotFound": "الارم یافت نشد.",
+"DeadlineAlarmCreated": "الارم با موفقیت ثبت شد.",
+"DeadlineAlarmRetrieved": "الارم دریافت شد.",
+"DueAlarmsRetrieved": "لیست الارم‌های سررسیدشده دریافت شد."
 
 
 

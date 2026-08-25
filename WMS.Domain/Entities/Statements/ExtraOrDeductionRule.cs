@@ -5,6 +5,7 @@ using WMS.Domain.Entities.Contracts;
 using WMS.Domain.Entities.Contractors;
 using WMS.Domain.Entities.ContractTypes;
 using WMS.Domain.Enums;
+using WMS.Domain.Entities.Labels;
 
 namespace WMS.Domain.Entities.Statements;
 
@@ -43,6 +44,10 @@ public class ExtraOrDeductionRule : BaseEntity
     public Guid? ContractorId { get; set; }
     [ForeignKey(nameof(ContractorId))]
     public virtual Contractor? Contractor { get; set; }
+
+    public Guid? LabelId { get; set; }
+    [ForeignKey(nameof(LabelId))]
+    public virtual Label? Label { get; set; }
 
     public virtual ICollection<ContractorStatementExtraOrDeduction> StatementItems { get; set; } = new List<ContractorStatementExtraOrDeduction>();
 }

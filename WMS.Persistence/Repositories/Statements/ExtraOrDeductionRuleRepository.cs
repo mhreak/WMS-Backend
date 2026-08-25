@@ -21,6 +21,7 @@ public class ExtraOrDeductionRuleRepository : IExtraOrDeductionRuleRepository
             .Include(x => x.ExtraOrDeductionType)
             .Include(x => x.Category)
             .Include(x => x.Contractor)
+            .Include(x => x.Label)
             .Where(x => !x.IsDeleted)
             .AsQueryable();
 
@@ -55,6 +56,7 @@ public class ExtraOrDeductionRuleRepository : IExtraOrDeductionRuleRepository
             .Include(x => x.ExtraOrDeductionType)
             .Include(x => x.Category)
             .Include(x => x.Contractor)
+            .Include(x => x.Label)
             .FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted, ct);
     }
 

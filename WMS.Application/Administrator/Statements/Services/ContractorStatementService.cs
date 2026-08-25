@@ -8,6 +8,7 @@ using WMS.Application.Common.Localization;
 using WMS.Application.Common.Pagination;
 using WMS.Domain.Entities.Attachments;
 using WMS.Domain.Entities.Statements;
+using WMS.Domain.Enums;
 
 namespace WMS.Application.Administrator.Statements.Services;
 
@@ -133,10 +134,9 @@ public class ContractorStatementService : IContractorStatementService
     
     private static string BuildAttachmentUrl(EntityAttachment attachment)
     => $"/uploads/{attachment.EntityId:N}/{attachment.FileName}";
-
-    private ContractorStatementDto MapToDto(ContractorStatement e)
+private ContractorStatementDto MapToDto(ContractorStatement e)
 {
-    var items = e.ExtraOrDeductions
+    var allItems = e.ExtraOrDeductions
         .Where(i => !i.IsDeleted)
         .Select(i => new StatementExtraOrDeductionItemDto
         {
@@ -144,16 +144,20 @@ public class ContractorStatementService : IContractorStatementService
             RuleId = i.RuleId,
             RuleTitle = i.Rule?.ExtraOrDeductionType?.Title,
             IsExtra = i.Rule?.ExtraOrDeductionType?.IsExtra ?? false,
+            AmountType = i.Rule?.AmountType ?? AmountType.Fixed,
+            PercentageValue = i.Rule?.AmountType == AmountType.Percentage ? i.Rule.Amount : null,
             Amount = i.Amount
         }).ToList();
 
-    var netAmount = e.Amount
-        + items.Where(i => i.IsExtra).Sum(i => i.Amount)
-        - items.Where(i => !i.IsExtra).Sum(i => i.Amount);
+    var extras = allItems.Where(i => i.IsExtra).ToList();
+    var deductions = allItems.Where(i => !i.IsExtra).ToList();
+    var totalExtra = extras.Sum(i => i.Amount);
+    var totalDeduction = deductions.Sum(i => i.Amount);
 
     return new ContractorStatementDto
     {
         Id = e.Id,
+        Title = e.Title,
         ContractId = e.ContractId,
         ContractTitle = e.Contract?.Title,
         ContractTypeStepId = e.ContractTypeStepId,
@@ -162,10 +166,13 @@ public class ContractorStatementService : IContractorStatementService
         FileId = e.FileId,
         FileName = e.Attachment?.FileName,
         FilePath = e.Attachment != null ? BuildAttachmentUrl(e.Attachment) : null,
-        Amount = e.Amount,
+        GrossAmount = e.Amount,
+        Extras = extras,
+        Deductions = deductions,
+        TotalExtra = totalExtra,
+        TotalDeduction = totalDeduction,
+        NetAmount = e.Amount + totalExtra - totalDeduction,
         Description = e.Description,
-        ExtraOrDeductions = items,
-        NetAmount = netAmount,
         CreatedAt = e.CreatedAt
     };
 }

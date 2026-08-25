@@ -7,4 +7,5 @@ public interface IContractCategoryService
     Task<ContractCategoryDto> CreateAsync(CreateContractCategoryRequest request, CancellationToken ct = default);
     Task<ContractCategoryDto> UpdateAsync(Guid id, UpdateContractCategoryRequest request, CancellationToken ct = default);
     Task DeleteAsync(Guid id, CancellationToken ct = default);
+    Task<ContractCategoryDto> GetByIdAsync(Guid id, CancellationToken ct = default);
 }

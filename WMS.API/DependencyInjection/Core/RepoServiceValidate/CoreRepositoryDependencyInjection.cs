@@ -33,6 +33,9 @@ using WMS.Application.Administrator.ContractTypeSteps.Interfaces;
 using WMS.Persistence.Repositories.ContractTypeSteps;
 using WMS.Application.Administrator.ContractTypeStates.Interfaces;
 using WMS.Persistence.Repositories.ContractTypeStates;
+using WMS.Application.Administrator.Alarms.Interfaces;
+
+using WMS.Persistence.Repositories.Alarms;
 
 
 namespace WMS.API.DependencyInjection;
@@ -71,6 +74,7 @@ public static class CoreRepositoryDependencyInjection
         services.AddScoped<IExtraOrDeductionTypeRepository, ExtraOrDeductionTypeRepository>();
         services.AddScoped<IExtraOrDeductionRuleRepository, ExtraOrDeductionRuleRepository>();
         services.AddScoped<IContractorStatementRepository, ContractorStatementRepository>();
+        services.AddScoped<IDeadlineAlarmRepository, DeadlineAlarmRepository>();
 
 
 

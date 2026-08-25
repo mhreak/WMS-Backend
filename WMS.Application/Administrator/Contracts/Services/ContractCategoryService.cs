@@ -103,4 +103,18 @@ public class ContractCategoryService : IContractCategoryService
         ParentName = parentName ?? e.Parent?.Name ?? string.Empty,
         CreatedAt = e.CreatedAt
     };
+    public async Task<ContractCategoryDto> GetByIdAsync(Guid id, CancellationToken ct = default)
+    {
+        var entity = await _repo.GetByIdAsync(id, ct)
+            ?? throw new NotFoundException(MessageKeys.ContractCategoryNotFound);
+
+        string? parentName = null;
+        if (entity.ParentId.HasValue)
+        {
+            var parent = await _repo.GetByIdAsync(entity.ParentId.Value, ct);
+            parentName = parent?.Name;
+        }
+
+        return MapToDto(entity, parentName);
+    }
 }

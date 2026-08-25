@@ -40,13 +40,13 @@ public class AdminContractCategoryController : AdminBaseController
     /// <summary>
     /// جزئیات یک دسته‌بندی
     /// </summary>
-    // [HttpGet("{id:guid}")]
-    // public async Task<IActionResult> GetById(Guid id, CancellationToken ct)
-    // {
-    //     var result = await _service.GetByIdAsync(id, ct);
-    //     var message = await _localizer.LocalizeAsync(MessageKeys.ContractCategoryRetrieved);
-    //     return Ok(ApiResult.Success(result, message));
-    // }
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetById(Guid id, CancellationToken ct)
+    {
+        var result = await _service.GetByIdAsync(id, ct);
+        var message = await _localizer.LocalizeAsync(MessageKeys.ContractCategoryRetrieved);
+        return Ok(ApiResult.Success(result, message));
+    }
 
     /// <summary>
     /// ایجاد دسته‌بندی (ParentId اختیاری)

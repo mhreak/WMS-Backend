@@ -66,7 +66,7 @@ public class ContractorService : IContractorService
             FirstName = request.FirstName?.Trim(),
             LastName = request.LastName?.Trim(),
             CompanyName = request.CompanyName?.Trim(),
-            CityId = request.CityId,
+            CityId = request.CityId?? null,
             Mobile1 = request.Mobile1?.Trim(),
             Mobile2 = request.Mobile2?.Trim(),
             Phone1 = request.Phone1?.Trim(),

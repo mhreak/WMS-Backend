@@ -12,6 +12,8 @@ public class CreateExtraOrDeductionRuleRequest
     public long Amount { get; set; }
     public Guid? CategoryId { get; set; }
     public Guid? ContractorId { get; set; }
+    public Guid? LabelId { get; set; }
+    public string? LabelName { get; set; }
 }
 
 public class UpdateExtraOrDeductionRuleRequest : CreateExtraOrDeductionRuleRequest
@@ -45,4 +47,6 @@ public class ExtraOrDeductionRuleDto
     public Guid? ContractorId { get; set; }
     public string? ContractorName { get; set; }
     public DateTime CreatedAt { get; set; }
+    public Guid? LabelId { get; set; }
+    public string? LabelName { get; set; }
 }

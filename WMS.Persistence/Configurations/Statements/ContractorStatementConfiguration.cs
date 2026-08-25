@@ -15,6 +15,7 @@ public class ContractorStatementConfiguration : IEntityTypeConfiguration<Contrac
         builder.Property(x => x.StatementDate).IsRequired();
         builder.Property(x => x.Amount).IsRequired();
         builder.Property(x => x.Description).HasMaxLength(1000);
+        builder.Property(x => x.Title).IsRequired().HasMaxLength(300);
 
         builder.HasOne(x => x.Contract)
             .WithMany()

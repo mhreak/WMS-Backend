@@ -183,4 +183,9 @@ public const string ExtraOrDeductionRuleNotFoundInSet = "ExtraOrDeductionRuleNot
 
 public const string MandatoryStepCannotBeMoved = "MandatoryStepCannotBeMoved";
 
+public const string DeadlineAlarmNotFound = "DeadlineAlarmNotFound";
+public const string DeadlineAlarmCreated = "DeadlineAlarmCreated";
+public const string DeadlineAlarmRetrieved = "DeadlineAlarmRetrieved";
+public const string DueAlarmsRetrieved = "DueAlarmsRetrieved";
+
 }

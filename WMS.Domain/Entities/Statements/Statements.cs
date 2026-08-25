@@ -31,6 +31,10 @@ public class ContractorStatement : BaseEntity
 
     [MaxLength(1000)]
     public string? Description { get; set; }
+    
+    [Required]
+    [MaxLength(300)]
+    public string Title { get; set; } = string.Empty;
 
     public virtual ICollection<ContractorStatementExtraOrDeduction> ExtraOrDeductions { get; set; } = new List<ContractorStatementExtraOrDeduction>();
 }

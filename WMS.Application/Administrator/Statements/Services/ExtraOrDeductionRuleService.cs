@@ -55,7 +55,8 @@ public class ExtraOrDeductionRuleService : IExtraOrDeductionRuleService
             Amount = request.Amount,
             CategoryId = request.CategoryId,
             ContractorId = request.ContractorId,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
+            LabelId = request.LabelId
         };
 
         await _repo.AddAsync(entity, ct);
@@ -81,6 +82,7 @@ public class ExtraOrDeductionRuleService : IExtraOrDeductionRuleService
         entity.Amount = request.Amount;
         entity.CategoryId = request.CategoryId;
         entity.ContractorId = request.ContractorId;
+        entity.LabelId = request.LabelId;
 
         await _repo.UpdateAsync(entity, ct);
         await _uow.SaveChangesAsync(ct);
@@ -126,6 +128,8 @@ public class ExtraOrDeductionRuleService : IExtraOrDeductionRuleService
         ContractorName = e.Contractor != null
             ? (e.Contractor.CompanyName ?? $"{e.Contractor.FirstName} {e.Contractor.LastName}".Trim())
             : null,
-        CreatedAt = e.CreatedAt
+        CreatedAt = e.CreatedAt,
+        LabelId = e.LabelId,
+        LabelName = e.Label?.Name,
     };
 }

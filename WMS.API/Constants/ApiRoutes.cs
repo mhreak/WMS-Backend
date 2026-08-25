@@ -27,6 +27,7 @@ public static class ApiRoutes
         public const string ExtraOrDeductionTypes = $"{AdminBase}/extra-or-deduction-types";
         public const string ExtraOrDeductionRules = $"{AdminBase}/extra-or-deduction-rules";
         public const string ContractorStatements = $"{AdminBase}/contractor-statements";
+        public const string DeadlineAlarm = $"{AdminBase}/DeadlineAlarm";
 
 
 
