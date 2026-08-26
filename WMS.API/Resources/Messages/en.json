@@ -132,7 +132,9 @@
   "DeadlineAlarmNotFound": "Alarm not found.",
 "DeadlineAlarmCreated": "Alarm created successfully.",
 "DeadlineAlarmRetrieved": "Alarm retrieved.",
-"DueAlarmsRetrieved": "Due alarms retrieved."
+"DueAlarmsRetrieved": "Due alarms retrieved.",
+"StepIdRequiredForContractStepAlarm" : "StepId is required for contract step alarms." ,
+"InvalidReferenceDateTypeForEntity" : " The selected reference date type is not valid for this entity."
 
 
 

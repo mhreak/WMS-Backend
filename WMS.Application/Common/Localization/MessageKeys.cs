@@ -187,5 +187,8 @@ public const string DeadlineAlarmNotFound = "DeadlineAlarmNotFound";
 public const string DeadlineAlarmCreated = "DeadlineAlarmCreated";
 public const string DeadlineAlarmRetrieved = "DeadlineAlarmRetrieved";
 public const string DueAlarmsRetrieved = "DueAlarmsRetrieved";
+public const string StepIdRequiredForContractStepAlarm = "StepIdRequiredForContractStepAlarm";
+
+public const string InvalidReferenceDateTypeForEntity = "InvalidReferenceDateTypeForEntity";
 
 }

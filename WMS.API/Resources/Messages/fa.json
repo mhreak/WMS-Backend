@@ -167,7 +167,9 @@
 "DeadlineAlarmNotFound": "الارم یافت نشد.",
 "DeadlineAlarmCreated": "الارم با موفقیت ثبت شد.",
 "DeadlineAlarmRetrieved": "الارم دریافت شد.",
-"DueAlarmsRetrieved": "لیست الارم‌های سررسیدشده دریافت شد."
+"DueAlarmsRetrieved": "لیست الارم‌های سررسیدشده دریافت شد." ,
+"StepIdRequiredForContractStepAlarm" : "StepId برای الارم‌های مرحله قرارداد الزامی است.",
+"InvalidReferenceDateTypeForEntity" : "نوع تاریخ مرجع انتخاب‌شده برای این موجودیت معتبر نیست."
 
 
 

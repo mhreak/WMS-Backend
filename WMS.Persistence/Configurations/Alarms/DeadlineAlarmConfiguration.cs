@@ -13,9 +13,10 @@ public class DeadlineAlarmConfiguration : IEntityTypeConfiguration<DeadlineAlarm
         builder.Property(x => x.Id).ValueGeneratedNever();
 
         builder.Property(x => x.EntityType).IsRequired().HasConversion<int>();
-        builder.Property(x => x.DaysBeforeDeadline).IsRequired();
+        builder.Property(x => x.ReferenceDateType).IsRequired().HasConversion<int>();
+        builder.Property(x => x.DaysOffset).IsRequired();
 
-        builder.HasIndex(x => new { x.ContractId, x.StepId });
+        builder.HasIndex(x => new { x.EntityType, x.EntityId, x.StepId });
         builder.HasIndex(x => x.IsActive);
         builder.HasIndex(x => x.IsDeleted);
     }

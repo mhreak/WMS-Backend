@@ -1,28 +1,28 @@
 using System.ComponentModel.DataAnnotations;
 using WMS.Domain.Common;
+using WMS.Domain.Enums;
 
 namespace WMS.Domain.Entities.Alarms;
-
-public enum AlarmEntityType
-{
-    Contract = 1,
-    ContractStep = 2
-}
 
 public class DeadlineAlarm : BaseEntity
 {
     [Required]
-    public AlarmEntityType EntityType { get; set; }
+    public EntityType EntityType { get; set; }
 
-    // اگه EntityType = ContractStep باشه، این معادل ContractStep.Id (کلید Contract_ContractTypeStep) نیست چون اون کلید ترکیبیه؛
-    // پس این‌جا ContractId رو نگه می‌داریم و StepId رو جدا، تا بشه دقیق به همون ردیف اشاره کرد.
+    // برای Contract: همون Contract.Id
+    // برای ContractStep: همون Contract.Id (والد)، و StepId زیر مشخص می‌کنه کدوم مرحله
     [Required]
-    public Guid ContractId { get; set; }
+    public Guid EntityId { get; set; }
 
-    public Guid? StepId { get; set; } // فقط وقتی EntityType = ContractStep پر می‌شه
+    // فقط وقتی EntityType = ContractStep پر می‌شه (معادل ContractTypeStep.Id)
+    public Guid? StepId { get; set; }
 
     [Required]
-    public int DaysBeforeDeadline { get; set; } // مثلاً 20 یا 10
+    public AlarmReferenceDateType ReferenceDateType { get; set; }
+
+    // مثبت = X روز بعد از تاریخ مرجع | منفی = X روز قبل از تاریخ مرجع
+    [Required]
+    public int DaysOffset { get; set; }
 
     public bool IsActive { get; set; } = true;
 }
