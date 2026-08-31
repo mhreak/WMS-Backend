@@ -1,5 +1,6 @@
 
 // WMS.Application/Administrator/Contracts/DTOs/ContractDtos.cs
+using System.Text.Json.Serialization;
 using WMS.Application.Administrator.Contractors.DTOs;
 
 namespace WMS.Application.Administrator.Contracts.DTOs;
@@ -12,6 +13,9 @@ public class CreateContractRequest
     public string ContractNumber { get; set; } = string.Empty;
     public DateTime StartDate { get; set; }
     public DateTime? FinishedDate { get; set; }
+
+    [JsonPropertyName("contractType")]
+    public Guid? ContractTypeId { get; set; }
 
     public List<Guid>? CategoryIds { get; set; }
     public bool IsActive { get; set; } = true;
@@ -26,6 +30,9 @@ public class UpdateContractRequest
     public string ContractNumber { get; set; } = string.Empty;
     public DateTime StartDate { get; set; }
     public DateTime? FinishedDate { get; set; }
+
+    [JsonPropertyName("contractType")]
+    public Guid? ContractTypeId { get; set; }
     public bool IsActive { get; set; }
     public List<Guid>? CategoryIds { get; set; }
     public Guid? ContractTypeStateId { get; set; }
@@ -46,6 +53,9 @@ public class ContractDto
     public DateOnly StartDate { get; set; }
     public DateOnly? FinishedDate { get; set; }
     public bool IsActive { get; set; }
+
+    public Guid? ContractTypeId { get; set; }
+    public string ContractTypeTitle { get; set; } = string.Empty;
 
     // جدید
     public Guid? CurrentStepId { get; set; }

@@ -29,6 +29,7 @@ public class ContractRepository : IContractRepository
         return await _db.Contract
             .Include(x => x.Contractor)
             .Include(x => x.Categories)
+            .Include(x => x.ContractType)
             .Include(x => x.ContractSteps)
             .ThenInclude(cs => cs.Step)
             .Include(x => x.ContractTypeState)
@@ -41,6 +42,7 @@ public class ContractRepository : IContractRepository
             .AsNoTracking()
             .Include(x => x.Contractor)
             .Include(x => x.Categories)
+            .Include(x => x.ContractType)
             .Include(x => x.ContractSteps)
                 .ThenInclude(cs => cs.Step)
             .Include(x => x.ContractTypeState)

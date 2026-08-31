@@ -63,6 +63,7 @@ public class ContractService : IContractService
             ContractorId = request.ContractorId,
             ContractAmount = request.ContractAmount,
             ContractNumber = contractNumber,
+            ContractTypeId = request.ContractTypeId,
             StartDate      = DateOnly.FromDateTime(request.StartDate),          // convert if needed
             FinishedDate   = request.FinishedDate.HasValue 
                         ? DateOnly.FromDateTime(request.FinishedDate.Value) 
@@ -102,6 +103,7 @@ public class ContractService : IContractService
         entity.ContractorId = request.ContractorId;
         entity.ContractAmount = request.ContractAmount;
         entity.ContractNumber = contractNumber;
+        entity.ContractTypeId = request.ContractTypeId;
         entity.StartDate    = DateOnly.FromDateTime(request.StartDate);
         entity.FinishedDate = request.FinishedDate is null 
         ? null 
@@ -165,6 +167,9 @@ public class ContractService : IContractService
         CurrentStepStartDate = currentStep?.StartDate,
         ContractTypeStateId = entity.ContractTypeStateId,
         ContractTypeStateTitle = entity.ContractTypeState?.Title ?? string.Empty,
+
+        ContractTypeId = entity.ContractTypeId,
+        ContractTypeTitle = entity.ContractType?.Title ?? string.Empty,
 
         CreatedAt = entity.CreatedAt,
         UpdatedAt = entity.UpdatedAt

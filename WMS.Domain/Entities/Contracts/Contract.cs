@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using WMS.Domain.Common;
 using WMS.Domain.Entities.Contractors;
+using WMS.Domain.Entities.ContractTypes;
 
 namespace WMS.Domain.Entities.Contracts;
 
@@ -34,4 +35,9 @@ public class Contract : BaseEntity
 
     [ForeignKey(nameof(ContractTypeStateId))]
     public virtual ContractTypeState? ContractTypeState { get; set; }
+
+    public Guid? ContractTypeId { get; set; }
+
+    [ForeignKey(nameof(ContractTypeId))]
+    public virtual ContractType? ContractType { get; set; }
 }

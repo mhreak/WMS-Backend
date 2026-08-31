@@ -28,11 +28,17 @@ public class ContractConfiguration : IEntityTypeConfiguration<Contract>
         .HasForeignKey(x => x.ContractTypeStateId)
         .OnDelete(DeleteBehavior.Restrict);
 
+        builder.HasOne(x => x.ContractType)
+        .WithMany()
+        .HasForeignKey(x => x.ContractTypeId)
+        .OnDelete(DeleteBehavior.Restrict);
+
         builder.HasIndex(x => x.ContractNumber).IsUnique();
         builder.HasIndex(x => x.ContractorId);
         builder.HasIndex(x => x.IsDeleted);
         builder.HasIndex(x => x.StartDate);
         builder.HasIndex(x => x.ContractTypeStateId);
+        builder.HasIndex(x => x.ContractTypeId);
         
 
         // داخل ContractConfiguration:
