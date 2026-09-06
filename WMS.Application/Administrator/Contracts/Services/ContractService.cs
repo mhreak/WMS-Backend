@@ -2,6 +2,7 @@
 using WMS.Application.Administrator.ContractBoard.DTOs;
 using WMS.Application.Administrator.Contracts.DTOs;
 using WMS.Application.Administrator.Contracts.Interfaces;
+using WMS.Application.Administrator.ContractTypeSteps.Interfaces;
 using WMS.Application.Common.Exceptions;
 using WMS.Application.Common.Interfaces;
 using WMS.Application.Common.Localization;
@@ -17,12 +18,14 @@ public class ContractService : IContractService
     private readonly IUnitOfWork _uow;
 
     private readonly IContractCategoryRepository _categoryRepo;
+    private readonly IStepRepository _stepRepo;
 
-    public ContractService(IContractRepository repo, IUnitOfWork uow , IContractCategoryRepository categoryRepo)
+    public ContractService(IContractRepository repo, IUnitOfWork uow , IContractCategoryRepository categoryRepo, IStepRepository stepRepo)
     {
         _repo = repo;
         _uow = uow;
         _categoryRepo = categoryRepo;
+        _stepRepo = stepRepo;
 
     }
 
@@ -64,21 +67,39 @@ public class ContractService : IContractService
             ContractAmount = request.ContractAmount,
             ContractNumber = contractNumber,
             ContractTypeId = request.ContractTypeId,
-            StartDate      = DateOnly.FromDateTime(request.StartDate),          // convert if needed
-            FinishedDate   = request.FinishedDate.HasValue 
-                        ? DateOnly.FromDateTime(request.FinishedDate.Value) 
-                        : null,
+            StartDate = DateOnly.FromDateTime(request.StartDate),
+            FinishedDate = request.FinishedDate.HasValue
+                ? DateOnly.FromDateTime(request.FinishedDate.Value)
+                : null,
             CreatedAt = DateTime.UtcNow
         };
+
         if (request.CategoryIds is { Count: > 0 })
-            {
-                var categories = await _categoryRepo.GetByIdsAsync(request.CategoryIds, ct);
-                foreach (var cat in categories)
-                    entity.Categories.Add(cat);
-            }
+        {
+            var categories = await _categoryRepo.GetByIdsAsync(request.CategoryIds, ct);
+            foreach (var cat in categories)
+                entity.Categories.Add(cat);
+        }
 
         await _repo.AddAsync(entity, ct);
         await _uow.SaveChangesAsync(ct);
+
+        // ===== جدید: ورود خودکار به اولین مرحله‌ی نوع قرارداد =====
+        if (entity.ContractTypeId.HasValue)
+{
+    var steps = await _stepRepo.GetByContractTypeAsync(entity.ContractTypeId.Value, onlyActive: true, ct);
+    var firstStep = steps.OrderBy(s => s.StepOrder).FirstOrDefault();
+
+    if (firstStep != null)
+    {
+        await _repo.MoveStepAsync(entity.Id, new MoveContractStepRequest
+        {
+            TargetStepId = firstStep.Id,
+            StartDate = entity.StartDate
+        }, ct);
+    }
+}
+        // ==========================================================
 
         var created = await _repo.GetByIdWithDetailsAsync(entity.Id, ct)
             ?? throw new NotFoundException(MessageKeys.ContractNotFound);
