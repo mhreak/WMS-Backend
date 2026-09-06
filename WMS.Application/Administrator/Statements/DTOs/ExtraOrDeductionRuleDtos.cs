@@ -11,7 +11,6 @@ public class CreateExtraOrDeductionRuleRequest
 
     public Guid? ContractorCategoryId { get; set; }   // قبلاً CategoryId
     public Guid? ContractCategoryId { get; set; }     // جدید
-    public Guid? ContractorId { get; set; }
     public Guid? ContractLabelId { get; set; }        // قبلاً LabelId
 }
 
@@ -52,8 +51,6 @@ public class ExtraOrDeductionRuleDto
     public Guid? ContractCategoryId { get; set; }
     public string? ContractCategoryName { get; set; }
 
-    public Guid? ContractorId { get; set; }
-    public string? ContractorName { get; set; }
 
     public Guid? ContractLabelId { get; set; }
     public string? ContractLabelName { get; set; }

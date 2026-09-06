@@ -41,9 +41,6 @@ public class ExtraOrDeductionRule : BaseEntity
     [ForeignKey(nameof(ContractCategoryId))]
     public virtual ContractCategory? ContractCategory { get; set; }
 
-    public Guid? ContractorId { get; set; }
-    [ForeignKey(nameof(ContractorId))]
-    public virtual Contractor? Contractor { get; set; }
 
     // لیبل قرارداد
     public Guid? ContractLabelId { get; set; }

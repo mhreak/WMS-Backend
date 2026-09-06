@@ -38,11 +38,6 @@ public class ExtraOrDeductionRuleConfiguration : IEntityTypeConfiguration<ExtraO
         .HasForeignKey(x => x.ContractCategoryId)
         .OnDelete(DeleteBehavior.Restrict);
 
-    builder.HasOne(x => x.Contractor)
-        .WithMany()
-        .HasForeignKey(x => x.ContractorId)
-        .OnDelete(DeleteBehavior.Restrict);
-
     builder.HasOne(x => x.ContractLabel)
         .WithMany()
         .HasForeignKey(x => x.ContractLabelId)
@@ -52,7 +47,6 @@ public class ExtraOrDeductionRuleConfiguration : IEntityTypeConfiguration<ExtraO
     builder.HasIndex(x => x.ExtraOrDeductionTypeId);
     builder.HasIndex(x => x.ContractorCategoryId);
     builder.HasIndex(x => x.ContractCategoryId);
-    builder.HasIndex(x => x.ContractorId);
     builder.HasIndex(x => x.ContractLabelId);
     builder.HasIndex(x => x.IsDeleted);
 }
