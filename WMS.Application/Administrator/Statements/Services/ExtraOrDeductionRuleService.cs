@@ -45,20 +45,19 @@ public class ExtraOrDeductionRuleService : IExtraOrDeductionRuleService
         await ValidateTypeExistsAsync(request.ExtraOrDeductionTypeId, ct);
 
         var entity = new ExtraOrDeductionRule
-        {
-            Id = Guid.NewGuid(),
-            ContractTypeId = request.ContractTypeId,
-            ContractId = request.ContractId,
-            ContractorType = request.ContractorType,
-            ExtraOrDeductionTypeId = request.ExtraOrDeductionTypeId,
-            AmountType = request.AmountType,
-            Amount = request.Amount,
-            CategoryId = request.CategoryId,
-            ContractorId = request.ContractorId,
-            CreatedAt = DateTime.UtcNow,
-            LabelId = request.LabelId
-        };
-
+{
+    Id = Guid.NewGuid(),
+    ContractTypeId = request.ContractTypeId,
+    ContractorType = request.ContractorType,
+    ExtraOrDeductionTypeId = request.ExtraOrDeductionTypeId,
+    AmountType = request.AmountType,
+    Amount = request.Amount,
+    ContractorCategoryId = request.ContractorCategoryId,
+    ContractCategoryId = request.ContractCategoryId,
+    ContractorId = request.ContractorId,
+    ContractLabelId = request.ContractLabelId,
+    CreatedAt = DateTime.UtcNow
+};
         await _repo.AddAsync(entity, ct);
         await _uow.SaveChangesAsync(ct);
 
@@ -75,14 +74,14 @@ public class ExtraOrDeductionRuleService : IExtraOrDeductionRuleService
         await ValidateTypeExistsAsync(request.ExtraOrDeductionTypeId, ct);
 
         entity.ContractTypeId = request.ContractTypeId;
-        entity.ContractId = request.ContractId;
         entity.ContractorType = request.ContractorType;
         entity.ExtraOrDeductionTypeId = request.ExtraOrDeductionTypeId;
         entity.AmountType = request.AmountType;
         entity.Amount = request.Amount;
-        entity.CategoryId = request.CategoryId;
+        entity.ContractorCategoryId = request.ContractorCategoryId;
+        entity.ContractCategoryId = request.ContractCategoryId;
         entity.ContractorId = request.ContractorId;
-        entity.LabelId = request.LabelId;
+        entity.ContractLabelId = request.ContractLabelId;
 
         await _repo.UpdateAsync(entity, ct);
         await _uow.SaveChangesAsync(ct);
@@ -110,26 +109,31 @@ public class ExtraOrDeductionRuleService : IExtraOrDeductionRuleService
     }
 
     private static ExtraOrDeductionRuleDto MapToDto(ExtraOrDeductionRule e) => new()
-    {
-        Id = e.Id,
-        ContractTypeId = e.ContractTypeId,
-        ContractTypeTitle = e.ContractType?.Title,
-        ContractId = e.ContractId,
-        ContractTitle = e.Contract?.Title,
-        ContractorType = e.ContractorType,
-        ExtraOrDeductionTypeId = e.ExtraOrDeductionTypeId,
-        ExtraOrDeductionTypeTitle = e.ExtraOrDeductionType?.Title,
-        IsExtra = e.ExtraOrDeductionType?.IsExtra ?? false,
-        AmountType = e.AmountType,
-        Amount = e.Amount,
-        CategoryId = e.CategoryId,
-        CategoryName = e.Category?.Name,
-        ContractorId = e.ContractorId,
-        ContractorName = e.Contractor != null
-            ? (e.Contractor.CompanyName ?? $"{e.Contractor.FirstName} {e.Contractor.LastName}".Trim())
-            : null,
-        CreatedAt = e.CreatedAt,
-        LabelId = e.LabelId,
-        LabelName = e.Label?.Name,
-    };
+{
+    Id = e.Id,
+    ContractTypeId = e.ContractTypeId,
+    ContractTypeTitle = e.ContractType?.Title,
+    ContractorType = e.ContractorType,
+    ExtraOrDeductionTypeId = e.ExtraOrDeductionTypeId,
+    ExtraOrDeductionTypeTitle = e.ExtraOrDeductionType?.Title,
+    IsExtra = e.ExtraOrDeductionType?.IsExtra ?? false,
+    AmountType = e.AmountType,
+    Amount = e.Amount,
+
+    ContractorCategoryId = e.ContractorCategoryId,
+    ContractorCategoryName = e.ContractorCategory?.Name,
+
+    ContractCategoryId = e.ContractCategoryId,
+    ContractCategoryName = e.ContractCategory?.Name,
+
+    ContractorId = e.ContractorId,
+    ContractorName = e.Contractor != null
+        ? (e.Contractor.CompanyName ?? $"{e.Contractor.FirstName} {e.Contractor.LastName}".Trim())
+        : null,
+
+    ContractLabelId = e.ContractLabelId,
+    ContractLabelName = e.ContractLabel?.Name,
+
+    CreatedAt = e.CreatedAt
+};
 }

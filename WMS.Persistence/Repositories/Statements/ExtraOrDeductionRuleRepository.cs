@@ -12,53 +12,60 @@ public class ExtraOrDeductionRuleRepository : IExtraOrDeductionRuleRepository
     private readonly AppDbContext _db;
     public ExtraOrDeductionRuleRepository(AppDbContext db) => _db = db;
 
-    public async Task<PagedResult<ExtraOrDeductionRule>> GetPagedAsync(ExtraOrDeductionRuleFilterRequest filter, CancellationToken ct = default)
-    {
-        var query = _db.ExtraOrDeductionRule
-            .AsNoTracking()
-            .Include(x => x.ContractType)
-            .Include(x => x.Contract)
-            .Include(x => x.ExtraOrDeductionType)
-            .Include(x => x.Category)
-            .Include(x => x.Contractor)
-            .Include(x => x.Label)
-            .Where(x => !x.IsDeleted)
-            .AsQueryable();
+   public async Task<PagedResult<ExtraOrDeductionRule>> GetPagedAsync(
+    ExtraOrDeductionRuleFilterRequest filter, CancellationToken ct = default)
+{
+    var query = _db.ExtraOrDeductionRule
+        .AsNoTracking()
+        .Include(x => x.ContractType)
+        .Include(x => x.ExtraOrDeductionType)
+        .Include(x => x.ContractorCategory)
+        .Include(x => x.ContractCategory)
+        .Include(x => x.Contractor)
+        .Include(x => x.ContractLabel)
+        .Where(x => !x.IsDeleted)
+        .AsQueryable();
 
-        if (filter.ContractTypeId.HasValue)
-            query = query.Where(x => x.ContractTypeId == filter.ContractTypeId.Value);
+    if (filter.ContractTypeId.HasValue)
+        query = query.Where(x => x.ContractTypeId == filter.ContractTypeId.Value);
 
-        if (filter.ContractId.HasValue)
-            query = query.Where(x => x.ContractId == filter.ContractId.Value);
+    if (filter.ExtraOrDeductionTypeId.HasValue)
+        query = query.Where(x => x.ExtraOrDeductionTypeId == filter.ExtraOrDeductionTypeId.Value);
 
-        if (filter.ExtraOrDeductionTypeId.HasValue)
-            query = query.Where(x => x.ExtraOrDeductionTypeId == filter.ExtraOrDeductionTypeId.Value);
+    if (filter.ContractorCategoryId.HasValue)
+        query = query.Where(x => x.ContractorCategoryId == filter.ContractorCategoryId.Value);
 
-        query = query.OrderByDescending(x => x.CreatedAt);
+    if (filter.ContractCategoryId.HasValue)
+        query = query.Where(x => x.ContractCategoryId == filter.ContractCategoryId.Value);
 
-        var pagination = new PaginationQuery { Page = filter.Page, PageSize = filter.PageSize }.Normalize();
-        var totalCount = await query.CountAsync(ct);
-        var items = await query.Skip(pagination.Skip).Take(pagination.Take).ToListAsync(ct);
+    if (filter.ContractLabelId.HasValue)
+        query = query.Where(x => x.ContractLabelId == filter.ContractLabelId.Value);
 
-        return PagedResult<ExtraOrDeductionRule>.Create(items, pagination, totalCount);
-    }
+    query = query.OrderByDescending(x => x.CreatedAt);
+
+    var pagination = new PaginationQuery { Page = filter.Page, PageSize = filter.PageSize }.Normalize();
+    var totalCount = await query.CountAsync(ct);
+    var items = await query.Skip(pagination.Skip).Take(pagination.Take).ToListAsync(ct);
+
+    return PagedResult<ExtraOrDeductionRule>.Create(items, pagination, totalCount);
+}
 
     public async Task<ExtraOrDeductionRule?> GetByIdAsync(Guid id, CancellationToken ct = default)
     {
         return await _db.ExtraOrDeductionRule.FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted, ct);
     }
 
-    public async Task<ExtraOrDeductionRule?> GetByIdWithDetailsAsync(Guid id, CancellationToken ct = default)
-    {
-        return await _db.ExtraOrDeductionRule
-            .Include(x => x.ContractType)
-            .Include(x => x.Contract)
-            .Include(x => x.ExtraOrDeductionType)
-            .Include(x => x.Category)
-            .Include(x => x.Contractor)
-            .Include(x => x.Label)
-            .FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted, ct);
-    }
+   public async Task<ExtraOrDeductionRule?> GetByIdWithDetailsAsync(Guid id, CancellationToken ct = default)
+{
+    return await _db.ExtraOrDeductionRule
+        .Include(x => x.ContractType)
+        .Include(x => x.ExtraOrDeductionType)
+        .Include(x => x.ContractorCategory)
+        .Include(x => x.ContractCategory)
+        .Include(x => x.Contractor)
+        .Include(x => x.ContractLabel)
+        .FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted, ct);
+}
 
     public async Task AddAsync(ExtraOrDeductionRule entity, CancellationToken ct = default)
     {

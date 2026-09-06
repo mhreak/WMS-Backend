@@ -1,4 +1,6 @@
 // WMS.Application/Administrator/Contractors/Services/ContractorService.cs
+using WMS.Application.Administrator.Attachments.DTOs;
+using WMS.Application.Administrator.Attachments.Interfaces;
 using WMS.Application.Administrator.Contractors.DTOs;
 using WMS.Application.Administrator.Contractors.Interfaces;
 using WMS.Application.Administrator.Labels.Interfaces;
@@ -18,14 +20,18 @@ public class ContractorService : IContractorService
     private readonly ILabelRepository _labelRepo;
     private readonly IUnitOfWork _uow;
 
+    private readonly IEntityAttachmentService _attachmentService;
+
     public ContractorService(
         IContractorRepository repo,
         ILabelRepository labelRepo,
-        IUnitOfWork uow)
+        IUnitOfWork uow ,
+        IEntityAttachmentService attachmentService)
     {
         _repo = repo;
         _labelRepo = labelRepo;
         _uow = uow;
+        _attachmentService = attachmentService;
     }
 
     public async Task<PagedResult<ContractorListItemDto>> GetListAsync(ContractorFilterRequest filter, CancellationToken ct = default)
@@ -52,7 +58,9 @@ public class ContractorService : IContractorService
             ?? throw new NotFoundException(MessageKeys.ContractorNotFound);
 
         var labels = await GetLabelsForEntityAsync(id, ct);
-        return MapToDetail(entity, labels);
+        var attachments = await _attachmentService.GetByEntityIdAsync(id, null, ct);  // جدید
+
+        return MapToDetail(entity, labels, attachments);
     }
 
     public async Task<ContractorDetailDto> CreateAsync(CreateContractorRequest request, CancellationToken ct = default)
@@ -95,7 +103,7 @@ public class ContractorService : IContractorService
             ?? throw new NotFoundException(MessageKeys.ContractorNotFound);
 
         var labels = await GetLabelsForEntityAsync(entity.Id, ct);
-        return MapToDetail(created, labels);
+        return MapToDetail(created, labels, new List<EntityAttachmentDto>());
     }
 
     public async Task<ContractorDetailDto> UpdateAsync(Guid id, UpdateContractorRequest request, CancellationToken ct = default)
@@ -137,7 +145,7 @@ public class ContractorService : IContractorService
             ?? throw new NotFoundException(MessageKeys.ContractorNotFound);
 
         var labels = await GetLabelsForEntityAsync(id, ct);
-        return MapToDetail(updated, labels);
+        return MapToDetail(updated, labels, await _attachmentService.GetByEntityIdAsync(id, null, ct));
     }
 
     public async Task DeleteAsync(Guid id, CancellationToken ct = default)
@@ -342,7 +350,12 @@ public class ContractorService : IContractorService
         CreatedAt = c.CreatedAt
     };
 
-    private static ContractorDetailDto MapToDetail(Contractor c, List<LookupItemDto> labels) => new()
+   private static ContractorDetailDto MapToDetail(
+    Contractor c,
+    List<LookupItemDto> labels,
+    List<EntityAttachmentDto> attachments)
+{
+    return new ContractorDetailDto
     {
         Id = c.Id,
         Type = c.Type,
@@ -367,7 +380,20 @@ public class ContractorService : IContractorService
             .Select(cat => new LookupItemDto { Id = cat.Id, Name = cat.Name })
             .ToList(),
         Labels = labels,
+
+        // جدید
+        Attachments = attachments.Select(a => new ContractorAttachmentDto
+        {
+            Id = a.Id,
+            FileName = a.FileName,
+            Extension = a.Extension,
+            Url = a.Url,
+            ThumbnailUrl = a.ThumbnailUrl,
+            Size = a.Size
+        }).ToList(),
+
         CreatedAt = c.CreatedAt,
         UpdatedAt = c.UpdatedAt
     };
+}
 }

@@ -128,6 +128,8 @@ public class ContractorDetailDto
     public List<LookupItemDto> Categories { get; set; } = new();
     public List<LookupItemDto> Labels { get; set; } = new();
 
+    public List<ContractorAttachmentDto> Attachments { get; set; } = new();
+
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
 }
@@ -155,4 +157,14 @@ public class UpdateLookupRequest
         public string? Color { get; set; }
 
     public bool IsActive { get; set; }
+}
+
+public class ContractorAttachmentDto
+{
+    public Guid Id { get; set; }
+    public string FileName { get; set; } = string.Empty;
+    public string Extension { get; set; } = string.Empty;
+    public string Url { get; set; } = string.Empty;
+    public string? ThumbnailUrl { get; set; }
+    public long Size { get; set; }
 }

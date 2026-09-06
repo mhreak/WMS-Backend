@@ -4,8 +4,8 @@ using WMS.Domain.Common;
 using WMS.Domain.Entities.Contracts;
 using WMS.Domain.Entities.Contractors;
 using WMS.Domain.Entities.ContractTypes;
-using WMS.Domain.Enums;
 using WMS.Domain.Entities.Labels;
+using WMS.Domain.Enums;
 
 namespace WMS.Domain.Entities.Statements;
 
@@ -16,12 +16,8 @@ public class ExtraOrDeductionRule : BaseEntity
     [ForeignKey(nameof(ContractTypeId))]
     public virtual ContractType ContractType { get; set; } = null!;
 
-    // اگه پر باشه، قانون فقط مخصوص همین قرارداده؛ خالی یعنی روی کل ContractType اعمال می‌شه
-    public Guid? ContractId { get; set; }
-    [ForeignKey(nameof(ContractId))]
-    public virtual Contract? Contract { get; set; }
+    // حذف شد: ContractId
 
-    // اگه پر باشه، فقط برای پیمانکار حقیقی/حقوقی اعمال می‌شه
     public ContractorType? ContractorType { get; set; }
 
     [Required]
@@ -35,19 +31,25 @@ public class ExtraOrDeductionRule : BaseEntity
     [Required]
     public long Amount { get; set; }
 
-    // دسته‌بندی پیمانکار (ContractorCategory) — اختیاری، برای محدودکردن قانون به یک دسته خاص
-    public Guid? CategoryId { get; set; }
-    [ForeignKey(nameof(CategoryId))]
-    public virtual ContractorCategory? Category { get; set; }
+    // دسته‌بندی پیمانکار
+    public Guid? ContractorCategoryId { get; set; }
+    [ForeignKey(nameof(ContractorCategoryId))]
+    public virtual ContractorCategory? ContractorCategory { get; set; }
 
-    // اگه پر باشه، فقط برای همین پیمانکار خاص اعمال می‌شه
+    // دسته‌بندی قرارداد (جدید)
+    public Guid? ContractCategoryId { get; set; }
+    [ForeignKey(nameof(ContractCategoryId))]
+    public virtual ContractCategory? ContractCategory { get; set; }
+
     public Guid? ContractorId { get; set; }
     [ForeignKey(nameof(ContractorId))]
     public virtual Contractor? Contractor { get; set; }
 
-    public Guid? LabelId { get; set; }
-    [ForeignKey(nameof(LabelId))]
-    public virtual Label? Label { get; set; }
+    // لیبل قرارداد
+    public Guid? ContractLabelId { get; set; }
+    [ForeignKey(nameof(ContractLabelId))]
+    public virtual Label? ContractLabel { get; set; }
 
-    public virtual ICollection<ContractorStatementExtraOrDeduction> StatementItems { get; set; } = new List<ContractorStatementExtraOrDeduction>();
+    public virtual ICollection<ContractorStatementExtraOrDeduction> StatementItems { get; set; }
+        = new List<ContractorStatementExtraOrDeduction>();
 }
