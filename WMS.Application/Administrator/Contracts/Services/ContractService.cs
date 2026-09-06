@@ -1,5 +1,6 @@
 // WMS.Application/Administrator/Contracts/Services/ContractService.cs
 using WMS.Application.Administrator.ContractBoard.DTOs;
+using WMS.Application.Administrator.Contractors.DTOs;
 using WMS.Application.Administrator.Contracts.DTOs;
 using WMS.Application.Administrator.Contracts.Interfaces;
 using WMS.Application.Administrator.ContractTypeSteps.Interfaces;
@@ -182,12 +183,19 @@ public class ContractService : IContractService
         ContractNumber = entity.ContractNumber,
         StartDate = entity.StartDate ?? default,
         FinishedDate = entity.FinishedDate,
+        Categories = entity.Categories?
+            .Select(c => new LookupItemDto
+            {
+                Id = c.Id,
+                Name = c.Name
+            }).ToList() ?? new List<LookupItemDto>(),
 
         CurrentStepId = currentStep?.StepId,
         CurrentStepTitle = currentStep?.Step?.Title,
         CurrentStepStartDate = currentStep?.StartDate,
         ContractTypeStateId = entity.ContractTypeStateId,
         ContractTypeStateTitle = entity.ContractTypeState?.Title ?? string.Empty,
+        
 
         ContractTypeId = entity.ContractTypeId,
         ContractTypeTitle = entity.ContractType?.Title ?? string.Empty,

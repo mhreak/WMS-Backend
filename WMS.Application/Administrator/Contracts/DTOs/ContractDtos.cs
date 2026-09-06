@@ -14,7 +14,6 @@ public class CreateContractRequest
     public DateTime StartDate { get; set; }
     public DateTime? FinishedDate { get; set; }
 
-    [JsonPropertyName("contractType")]
     public Guid? ContractTypeId { get; set; }
 
     public List<Guid>? CategoryIds { get; set; }
@@ -31,7 +30,6 @@ public class UpdateContractRequest
     public DateTime StartDate { get; set; }
     public DateTime? FinishedDate { get; set; }
 
-    [JsonPropertyName("contractType")]
     public Guid? ContractTypeId { get; set; }
     public bool IsActive { get; set; }
     public List<Guid>? CategoryIds { get; set; }
