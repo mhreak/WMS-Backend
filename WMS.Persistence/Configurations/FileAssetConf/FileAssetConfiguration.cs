@@ -18,5 +18,6 @@ public class FileAssetConfiguration : IEntityTypeConfiguration<FileAsset>
         builder.HasQueryFilter(f => !f.IsDeleted);
         builder.HasIndex(f => f.UploaderId);
         builder.HasIndex(f => f.IsDeleted);
+        builder.Property(f => f.ThumbnailPath).HasMaxLength(1000);
     }
 }

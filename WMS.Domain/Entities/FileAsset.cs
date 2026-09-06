@@ -31,4 +31,6 @@ public class FileAsset : BaseEntity
 
     [Required]
     public WMS.Domain.Enums.UploadFileType FileType { get; set; }
+
+    public string? ThumbnailPath { get; set; }
 }

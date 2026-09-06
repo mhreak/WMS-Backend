@@ -15,12 +15,14 @@ public class FileService : IFileService
 {
     private readonly IFileAssetRepository _fileRepository;
     private readonly IValidator<GenericUploadFileRequest> _validator;
+    private readonly IImageThumbnailService _thumbnailService;
     private readonly string _storageRootPath;
 
-    public FileService(IFileAssetRepository fileRepository, IValidator<GenericUploadFileRequest> validator, IHostEnvironment hostEnvironment, IConfiguration configuration)
+    public FileService(IFileAssetRepository fileRepository, IValidator<GenericUploadFileRequest> validator, IImageThumbnailService thumbnailService, IHostEnvironment hostEnvironment, IConfiguration configuration)
     {
         _fileRepository = fileRepository;
         _validator = validator;
+        _thumbnailService = thumbnailService;
         var configuredRoot = configuration["Storage:RootPath"];
         _storageRootPath = string.IsNullOrWhiteSpace(configuredRoot)
             ? Path.GetFullPath(Path.Combine(hostEnvironment.ContentRootPath, "..", "..", "uploads"))
@@ -49,25 +51,70 @@ public class FileService : IFileService
         var relativeFolder = Path.Combine(userRole, userId.ToString(), fileType.ToString());
         var targetFolder = Path.Combine(_storageRootPath, relativeFolder);
         Directory.CreateDirectory(targetFolder);
-        var fileExtension = Path.GetExtension(file.FileName);
-        var uniqueFileName = $"{Guid.NewGuid()}{fileExtension}";
-        var filePath = Path.Combine(targetFolder, uniqueFileName);
-        using (var stream = new FileStream(filePath, FileMode.Create))
-            await file.CopyToAsync(stream);
+
+        var originalExtension = Path.GetExtension(file.FileName);
+        var uniqueBaseName = Guid.NewGuid().ToString();
+
+        string filePath;
+        string finalExtension;
+        string? thumbnailRelativePath = null;
+
+        if (_thumbnailService.IsConvertibleToWebp(originalExtension))
+        {
+            // عکس رو به webp تبدیل و ذخیره می‌کنیم
+            await using (var stream = file.OpenReadStream())
+            {
+                filePath = await _thumbnailService.SaveAsWebpAsync(
+                    stream, Path.Combine(targetFolder, uniqueBaseName), CancellationToken.None);
+            }
+            finalExtension = ".webp";
+
+            var thumbnailFileName = $"{uniqueBaseName}_thumb.webp";
+            var thumbnailFullPath = Path.Combine(targetFolder, "thumbs", thumbnailFileName);
+            await _thumbnailService.GenerateThumbnailAsync(filePath, thumbnailFullPath, targetWidth: 800);
+            thumbnailRelativePath = Path.Combine("uploads", relativeFolder, "thumbs", thumbnailFileName).Replace("\\", "/");
+        }
+        else if (_thumbnailService.IsImage(originalExtension)) // فقط gif، بدون تبدیل ولی با Thumbnail
+        {
+            finalExtension = originalExtension;
+            var uniqueFileName = $"{uniqueBaseName}{finalExtension}";
+            filePath = Path.Combine(targetFolder, uniqueFileName);
+            await using (var fs = new FileStream(filePath, FileMode.Create))
+                await file.CopyToAsync(fs);
+
+            var thumbnailFileName = $"{uniqueBaseName}_thumb.webp";
+            var thumbnailFullPath = Path.Combine(targetFolder, "thumbs", thumbnailFileName);
+            await _thumbnailService.GenerateThumbnailAsync(filePath, thumbnailFullPath, targetWidth: 800);
+            thumbnailRelativePath = Path.Combine("uploads", relativeFolder, "thumbs", thumbnailFileName).Replace("\\", "/");
+        }
+        else
+        {
+            // فایل غیرعکسی (PDF, Word, ...) — بدون تغییر
+            finalExtension = originalExtension;
+            var uniqueFileName = $"{uniqueBaseName}{finalExtension}";
+            filePath = Path.Combine(targetFolder, uniqueFileName);
+            await using (var fs = new FileStream(filePath, FileMode.Create))
+                await file.CopyToAsync(fs);
+        }
+
+        var uniqueFinalFileName = Path.GetFileName(filePath);
+
         var entity = new FileAsset
         {
             Id = Guid.NewGuid(),
-            FileName = uniqueFileName,
-            Extension = fileExtension,
-            Size = file.Length,
-            UploadFileType = file.ContentType,
-            Path = Path.Combine("uploads", relativeFolder, uniqueFileName).Replace("\\", "/"),
+            FileName = uniqueFinalFileName,
+            Extension = finalExtension,
+            Size = new FileInfo(filePath).Length,   // سایز واقعیِ بعد از تبدیل، نه file.Length اصلی
+            UploadFileType = finalExtension == ".webp" ? "image/webp" : file.ContentType,
+            Path = Path.Combine("uploads", relativeFolder, uniqueFinalFileName).Replace("\\", "/"),
+            ThumbnailPath = thumbnailRelativePath,
             UploaderId = userId,
             OwnerId = userId,
             FileType = fileType,
             CreatedAt = DateTime.UtcNow,
             IsDeleted = false
         };
+
         await _fileRepository.AddAsync(entity);
         await _fileRepository.SaveChangesAsync();
         return entity;
