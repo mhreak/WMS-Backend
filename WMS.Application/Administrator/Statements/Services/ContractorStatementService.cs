@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Configuration;
 using WMS.Application.Administrator.Attachments.Interfaces;
 using WMS.Application.Administrator.Statements.DTOs;
 using WMS.Application.Administrator.Statements.Interfaces;
@@ -6,35 +5,36 @@ using WMS.Application.Common.Exceptions;
 using WMS.Application.Common.Interfaces;
 using WMS.Application.Common.Localization;
 using WMS.Application.Common.Pagination;
-using WMS.Domain.Entities.Attachments;
 using WMS.Domain.Entities.Statements;
-using WMS.Domain.Enums;
 
 namespace WMS.Application.Administrator.Statements.Services;
 
 public class ContractorStatementService : IContractorStatementService
 {
     private readonly IContractorStatementRepository _repo;
-    private readonly IEntityAttachmentRepository _attachmentRepo;
-    private readonly string _rootPath;
-
+    private readonly IEntityAttachmentService _attachmentService;   // جدید، به‌جای IEntityAttachmentRepository/IConfiguration
     private readonly IUnitOfWork _uow;
 
-    public ContractorStatementService(  IContractorStatementRepository repo,
-        IEntityAttachmentRepository attachmentRepo,
-        IUnitOfWork uow,
-        IConfiguration configuration)
+    public ContractorStatementService(
+        IContractorStatementRepository repo,
+        IEntityAttachmentService attachmentService,
+        IUnitOfWork uow)
     {
         _repo = repo;
-        _attachmentRepo = attachmentRepo;
+        _attachmentService = attachmentService;
         _uow = uow;
-        _rootPath = configuration["Storage:RootPath"] ?? "uploads";
     }
 
     public async Task<PagedResult<ContractorStatementDto>> GetListAsync(ContractorStatementFilterRequest filter, CancellationToken ct = default)
     {
         var paged = await _repo.GetPagedAsync(filter, ct);
-        var items = paged.Items.Select(MapToDto).ToList();
+        var items = new List<ContractorStatementDto>();
+
+        foreach (var statement in paged.Items)
+        {
+            var attachments = await _attachmentService.GetByEntityIdAsync(statement.Id, null, ct);
+            items.Add(MapToDto(statement, attachments));
+        }
 
         return PagedResult<ContractorStatementDto>.Create(items,
             new PaginationQuery { Page = paged.Page, PageSize = paged.PageSize }, paged.TotalCount);
@@ -44,7 +44,9 @@ public class ContractorStatementService : IContractorStatementService
     {
         var entity = await _repo.GetByIdWithDetailsAsync(id, ct)
             ?? throw new NotFoundException(MessageKeys.ContractorStatementNotFound);
-        return MapToDto(entity);
+
+        var attachments = await _attachmentService.GetByEntityIdAsync(id, null, ct);
+        return MapToDto(entity, attachments);
     }
 
     public async Task<ContractorStatementDto> CreateAsync(CreateContractorStatementRequest request, CancellationToken ct = default)
@@ -55,10 +57,9 @@ public class ContractorStatementService : IContractorStatementService
             ContractId = request.ContractId,
             ContractTypeStepId = request.ContractTypeStepId,
             StatementDate = request.StatementDate,
-            FileId = request.FileId?? null,
             Amount = request.Amount,
-            Title = request.Title,
             Description = request.Description?.Trim(),
+            Title = request.Title.Trim(),
             CreatedAt = DateTime.UtcNow
         };
 
@@ -67,7 +68,9 @@ public class ContractorStatementService : IContractorStatementService
 
         var created = await _repo.GetByIdWithDetailsAsync(entity.Id, ct)
             ?? throw new NotFoundException(MessageKeys.ContractorStatementNotFound);
-        return MapToDto(created);
+
+        // تازه ساخته شده، هنوز فایلی وصل نشده
+        return MapToDto(created, new List<Administrator.Attachments.DTOs.EntityAttachmentDto>());
     }
 
     public async Task<ContractorStatementDto> UpdateAsync(Guid id, UpdateContractorStatementRequest request, CancellationToken ct = default)
@@ -77,16 +80,18 @@ public class ContractorStatementService : IContractorStatementService
 
         entity.ContractTypeStepId = request.ContractTypeStepId;
         entity.StatementDate = request.StatementDate;
-        entity.FileId = request.FileId?? entity.FileId;
         entity.Amount = request.Amount;
         entity.Description = request.Description?.Trim();
+        entity.Title = request.Title.Trim();
 
         await _repo.UpdateAsync(entity, ct);
         await _uow.SaveChangesAsync(ct);
 
         var updated = await _repo.GetByIdWithDetailsAsync(id, ct)
             ?? throw new NotFoundException(MessageKeys.ContractorStatementNotFound);
-        return MapToDto(updated);
+
+        var attachments = await _attachmentService.GetByEntityIdAsync(id, null, ct);
+        return MapToDto(updated, attachments);
     }
 
     public async Task DeleteAsync(Guid id, CancellationToken ct = default)
@@ -125,56 +130,59 @@ public class ContractorStatementService : IContractorStatementService
 
         var updated = await _repo.GetByIdWithDetailsAsync(statementId, ct)
             ?? throw new NotFoundException(MessageKeys.ContractorStatementNotFound);
-        return MapToDto(updated);
+
+        var attachments = await _attachmentService.GetByEntityIdAsync(statementId, null, ct);
+        return MapToDto(updated, attachments);
     }
-    private string BuildAttachmentPath(EntityAttachment attachment)
-        {
-            var root = Path.IsPathRooted(_rootPath) ? _rootPath : Path.GetFullPath(_rootPath);
-            return Path.Combine(root, attachment.EntityId.ToString("N"), attachment.FileName);
-        }
-    
-    private static string BuildAttachmentUrl(EntityAttachment attachment)
-    => $"/uploads/{attachment.EntityId:N}/{attachment.FileName}";
-private ContractorStatementDto MapToDto(ContractorStatement e)
-{
-    var allItems = e.ExtraOrDeductions
-        .Where(i => !i.IsDeleted)
-        .Select(i => new StatementExtraOrDeductionItemDto
-        {
-            Id = i.Id,
-            RuleId = i.RuleId,
-            RuleTitle = i.Rule?.ExtraOrDeductionType?.Title,
-            IsExtra = i.Rule?.ExtraOrDeductionType?.IsExtra ?? false,
-            AmountType = i.Rule?.AmountType ?? AmountType.Fixed,
-            PercentageValue = i.Rule?.AmountType == AmountType.Percentage ? i.Rule.Amount : null,
-            Amount = i.Amount
-        }).ToList();
 
-    var extras = allItems.Where(i => i.IsExtra).ToList();
-    var deductions = allItems.Where(i => !i.IsExtra).ToList();
-    var totalExtra = extras.Sum(i => i.Amount);
-    var totalDeduction = deductions.Sum(i => i.Amount);
-
-    return new ContractorStatementDto
+    private static ContractorStatementDto MapToDto(
+        ContractorStatement e,
+        List<Administrator.Attachments.DTOs.EntityAttachmentDto> attachments)
     {
-        Id = e.Id,
-        Title = e.Title,
-        ContractId = e.ContractId,
-        ContractTitle = e.Contract?.Title,
-        ContractTypeStepId = e.ContractTypeStepId,
-        ContractTypeStepTitle = e.ContractTypeStep?.Title,
-        StatementDate = e.StatementDate,
-        FileId = e.FileId,
-        FileName = e.Attachment?.FileName,
-        FilePath = e.Attachment != null ? BuildAttachmentUrl(e.Attachment) : null,
-        Amount = e.Amount,
-        Extras = extras,
-        Deductions = deductions,
-        TotalExtra = totalExtra,
-        TotalDeduction = totalDeduction,
-        NetAmount = e.Amount + totalExtra - totalDeduction,
-        Description = e.Description,
-        CreatedAt = e.CreatedAt
-    };
-}
+        var allItems = e.ExtraOrDeductions
+            .Where(i => !i.IsDeleted)
+            .Select(i => new StatementExtraOrDeductionItemDto
+            {
+                Id = i.Id,
+                RuleId = i.RuleId,
+                RuleTitle = i.Rule?.ExtraOrDeductionType?.Title,
+                IsExtra = i.Rule?.ExtraOrDeductionType?.IsExtra ?? false,
+                AmountType = i.Rule?.AmountType ?? Domain.Enums.AmountType.Fixed,
+                PercentageValue = i.Rule?.AmountType == Domain.Enums.AmountType.Percentage ? i.Rule.Amount : null,
+                Amount = i.Amount
+            }).ToList();
+
+        var extras = allItems.Where(i => i.IsExtra).ToList();
+        var deductions = allItems.Where(i => !i.IsExtra).ToList();
+        var totalExtra = extras.Sum(i => i.Amount);
+        var totalDeduction = deductions.Sum(i => i.Amount);
+
+        return new ContractorStatementDto
+        {
+            Id = e.Id,
+            Title = e.Title,
+            ContractId = e.ContractId,
+            ContractTitle = e.Contract?.Title,
+            ContractTypeStepId = e.ContractTypeStepId,
+            ContractTypeStepTitle = e.ContractTypeStep?.Title,
+            StatementDate = e.StatementDate,
+            Attachments = attachments.Select(a => new StatementAttachmentDto
+            {
+                Id = a.Id,
+                FileName = a.FileName,
+                Extension = a.Extension,
+                Url = a.Url,
+                ThumbnailUrl = a.ThumbnailUrl,
+                Size = a.Size
+            }).ToList(),
+            Amount = e.Amount,
+            Extras = extras,
+            Deductions = deductions,
+            TotalExtra = totalExtra,
+            TotalDeduction = totalDeduction,
+            NetAmount = e.Amount + totalExtra - totalDeduction,
+            Description = e.Description,
+            CreatedAt = e.CreatedAt
+        };
+    }
 }

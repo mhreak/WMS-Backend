@@ -7,7 +7,6 @@ public class CreateContractorStatementRequest
     public Guid ContractId { get; set; }
     public Guid ContractTypeStepId { get; set; }
     public DateOnly StatementDate { get; set; }
-    public Guid? FileId { get; set; }
     public long Amount { get; set; }
     public string? Description { get; set; }
     public string Title { get; set; } = string.Empty;
@@ -17,7 +16,6 @@ public class UpdateContractorStatementRequest
 {
     public Guid ContractTypeStepId { get; set; }
     public DateOnly StatementDate { get; set; }
-    public Guid? FileId { get; set; }
     public long Amount { get; set; }
     public string? Description { get; set; }
     public string Title { get; set; } = string.Empty;
@@ -52,6 +50,15 @@ public class StatementExtraOrDeductionItemDto
     public long Amount { get; set; }           // مبلغ نهایی محاسبه‌شده (ریال)
 }
 
+public class StatementAttachmentDto
+{
+    public Guid Id { get; set; }
+    public string FileName { get; set; } = string.Empty;
+    public string Extension { get; set; } = string.Empty;
+    public string Url { get; set; } = string.Empty;
+    public string? ThumbnailUrl { get; set; }
+    public long Size { get; set; }
+}
 public class ContractorStatementDto
 {
     public Guid Id { get; set; }
@@ -61,10 +68,8 @@ public class ContractorStatementDto
     public Guid ContractTypeStepId { get; set; }
     public string? ContractTypeStepTitle { get; set; }
     public DateOnly StatementDate { get; set; }
-    public Guid? FileId { get; set; }
-    public string? FileName { get; set; }
     public string? FilePath { get; set; }
-
+    public List<StatementAttachmentDto> Attachments { get; set; } = new();
     public long Amount { get; set; }      // مبلغ ناخالص (Amount اصلی)
     public List<StatementExtraOrDeductionItemDto> Extras { get; set; } = new();       // اضافات
     public List<StatementExtraOrDeductionItemDto> Deductions { get; set; } = new();   // کسورات
