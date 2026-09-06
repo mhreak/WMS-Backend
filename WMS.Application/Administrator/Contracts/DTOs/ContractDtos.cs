@@ -11,11 +11,12 @@ public class CreateContractRequest
     public Guid? ContractorId { get; set; }
     public long ContractAmount { get; set; }
     public string ContractNumber { get; set; } = string.Empty;
-    public DateTime StartDate { get; set; }
+
+    // تغییر کرد
+    public DateTime? StartDate { get; set; }
     public DateTime? FinishedDate { get; set; }
 
     public Guid? ContractTypeId { get; set; }
-
     public List<Guid>? CategoryIds { get; set; }
     public bool IsActive { get; set; } = true;
     public Guid? ContractTypeStateId { get; set; }
@@ -27,7 +28,9 @@ public class UpdateContractRequest
     public Guid? ContractorId { get; set; }
     public long ContractAmount { get; set; }
     public string ContractNumber { get; set; } = string.Empty;
-    public DateTime StartDate { get; set; }
+
+    // تغییر کرد
+    public DateTime? StartDate { get; set; }
     public DateTime? FinishedDate { get; set; }
 
     public Guid? ContractTypeId { get; set; }
@@ -48,14 +51,16 @@ public class ContractDto
     public string ContractNumber { get; set; } = string.Empty;
 
     public List<LookupItemDto> Categories { get; set; } = new();
-    public DateOnly StartDate { get; set; }
+
+    // تغییر کرد
+    public DateOnly? StartDate { get; set; }
     public DateOnly? FinishedDate { get; set; }
+
     public bool IsActive { get; set; }
 
     public Guid? ContractTypeId { get; set; }
     public string ContractTypeTitle { get; set; } = string.Empty;
 
-    // جدید
     public Guid? CurrentStepId { get; set; }
     public string? CurrentStepTitle { get; set; }
     public DateOnly? CurrentStepStartDate { get; set; }
@@ -63,9 +68,8 @@ public class ContractDto
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
     public Guid? ContractTypeStateId { get; set; }
-    public string ContractTypeStateTitle { get; set; } = string.Empty; // اگر null بود → ""
+    public string ContractTypeStateTitle { get; set; } = string.Empty;
 }
-
 public class ContractFilterRequest
 {
     public string? Search { get; set; }

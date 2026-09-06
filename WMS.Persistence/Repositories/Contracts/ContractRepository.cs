@@ -90,11 +90,10 @@ public class ContractRepository : IContractRepository
     }
 
     public Task UpdateAsync(Contract entity, CancellationToken ct = default)
-    {
-        entity.UpdatedAt = DateTime.UtcNow;
-        _db.Contract.Update(entity);
-        return Task.CompletedTask;
-    }
+{
+    entity.UpdatedAt = DateTime.UtcNow;
+    return Task.CompletedTask;
+}
 
     public Task SoftDeleteAsync(Contract entity, CancellationToken ct = default)
     {

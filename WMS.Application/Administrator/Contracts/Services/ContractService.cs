@@ -50,101 +50,133 @@ public class ContractService : IContractService
         return MapToDto(entity);
     }
 
-    public async Task<ContractDto> CreateAsync(CreateContractRequest request, CancellationToken ct = default)
-    {
-        var contractNumber = request.ContractNumber.Trim();
-
-        if (await _repo.ExistsContractNumberAsync(contractNumber, null, ct))
-            throw new BadRequestException(MessageKeys.ContractNumberAlreadyExists);
-
-        if (request.FinishedDate.HasValue && request.FinishedDate < request.StartDate)
-            throw new BadRequestException(MessageKeys.InvalidContractDates);
-
-        var entity = new Contract
-        {
-            Id = Guid.NewGuid(),
-            Title = request.Title.Trim(),
-            ContractorId = request.ContractorId,
-            ContractAmount = request.ContractAmount,
-            ContractNumber = contractNumber,
-            ContractTypeId = request.ContractTypeId,
-            StartDate = DateOnly.FromDateTime(request.StartDate),
-            FinishedDate = request.FinishedDate.HasValue
-                ? DateOnly.FromDateTime(request.FinishedDate.Value)
-                : null,
-            CreatedAt = DateTime.UtcNow
-        };
-
-        if (request.CategoryIds is { Count: > 0 })
-        {
-            var categories = await _categoryRepo.GetByIdsAsync(request.CategoryIds, ct);
-            foreach (var cat in categories)
-                entity.Categories.Add(cat);
-        }
-
-        await _repo.AddAsync(entity, ct);
-        await _uow.SaveChangesAsync(ct);
-
-        // ===== جدید: ورود خودکار به اولین مرحله‌ی نوع قرارداد =====
-        if (entity.ContractTypeId.HasValue)
+public async Task<ContractDto> CreateAsync(CreateContractRequest request, CancellationToken ct = default)
 {
-    var steps = await _stepRepo.GetByContractTypeAsync(entity.ContractTypeId.Value, onlyActive: true, ct);
-    var firstStep = steps.OrderBy(s => s.StepOrder).FirstOrDefault();
+    var contractNumber = request.ContractNumber.Trim();
 
-    if (firstStep != null)
-    {
-        await _repo.MoveStepAsync(entity.Id, new MoveContractStepRequest
-        {
-            TargetStepId = firstStep.Id,
-            StartDate = entity.StartDate
-        }, ct);
-    }
+    if (await _repo.ExistsContractNumberAsync(contractNumber, null, ct))
+        throw new BadRequestException(MessageKeys.ContractNumberAlreadyExists);
+
+    if (request.StartDate.HasValue && request.FinishedDate.HasValue 
+    && request.FinishedDate < request.StartDate)
+{
+    throw new BadRequestException(MessageKeys.InvalidContractDates);
 }
-        // ==========================================================
 
-        var created = await _repo.GetByIdWithDetailsAsync(entity.Id, ct)
-            ?? throw new NotFoundException(MessageKeys.ContractNotFound);
+    var entity = new Contract
+    {
+        Id = Guid.NewGuid(),
+        Title = request.Title.Trim(),
+        ContractorId = request.ContractorId,
+        ContractAmount = request.ContractAmount,
+        ContractNumber = contractNumber,
+        ContractTypeId = request.ContractTypeId,
+        StartDate = request.StartDate.HasValue
+            ? DateOnly.FromDateTime(request.StartDate.Value)
+            : null,
+        FinishedDate = request.FinishedDate.HasValue
+            ? DateOnly.FromDateTime(request.FinishedDate.Value)
+            : null,
+        CreatedAt = DateTime.UtcNow
+    };
 
-        return MapToDto(created);
+    // اضافه کردن دسته‌بندی‌ها
+    if (request.CategoryIds is { Count: > 0 })
+    {
+        var categories = await _categoryRepo.GetByIdsAsync(request.CategoryIds, ct);
+        foreach (var cat in categories)
+            entity.Categories.Add(cat);
     }
+
+    await _repo.AddAsync(entity, ct);
+    await _uow.SaveChangesAsync(ct);
+
+    // ===== ورود خودکار به اولین مرحله بر اساس ContractTypeId =====
+    if (entity.ContractTypeId.HasValue)
+    {
+        // مراحل مربوط به این نوع قرارداد (مرتب‌شده بر اساس StepOrder)
+        var steps = await _stepRepo.GetByContractTypeAsync(
+            entity.ContractTypeId.Value,
+            onlyActive: true,
+            ct);
+
+        var firstStep = steps.FirstOrDefault(); // چون قبلاً OrderBy(StepOrder) شده
+
+        if (firstStep != null)
+        {
+            // دقیقاً همان منطق API مربوط به move-step
+            await _repo.MoveStepAsync(entity.Id, new MoveContractStepRequest
+            {
+                TargetStepId = firstStep.Id,
+                StartDate = entity.StartDate   // تاریخ شروع قرارداد
+            }, ct);
+        }
+    }
+    // ==============================================================
+
+    var created = await _repo.GetByIdWithDetailsAsync(entity.Id, ct)
+        ?? throw new NotFoundException(MessageKeys.ContractNotFound);
+
+    return MapToDto(created);
+}
 
     public async Task<ContractDto> UpdateAsync(Guid id, UpdateContractRequest request, CancellationToken ct = default)
+{
+    var entity = await _repo.GetByIdWithDetailsAsync(id, ct)
+        ?? throw new NotFoundException(MessageKeys.ContractNotFound);
+
+    var contractNumber = request.ContractNumber.Trim();
+
+    if (await _repo.ExistsContractNumberAsync(contractNumber, id, ct))
+        throw new BadRequestException(MessageKeys.ContractNumberAlreadyExists);
+
+    if (request.StartDate.HasValue && request.FinishedDate.HasValue 
+    && request.FinishedDate < request.StartDate)
+{
+    throw new BadRequestException(MessageKeys.InvalidContractDates);
+}
+
+    // فیلدهای ساده
+    entity.Title = request.Title.Trim();
+    entity.ContractorId = request.ContractorId;
+    entity.ContractAmount = request.ContractAmount;
+    entity.ContractNumber = contractNumber;
+    entity.ContractTypeId = request.ContractTypeId;
+    entity.ContractTypeStateId = request.ContractTypeStateId;
+    entity.StartDate = request.StartDate.HasValue
+        ? DateOnly.FromDateTime(request.StartDate.Value)
+        : null;
+    entity.FinishedDate = request.FinishedDate.HasValue
+        ? DateOnly.FromDateTime(request.FinishedDate.Value)
+        : null;
+    entity.UpdatedAt = DateTime.UtcNow;
+
+    // ========== مدیریت Categories (روش مقاوم) ==========
+    var desiredIds = request.CategoryIds?.Distinct().ToList() ?? new List<Guid>();
+
+    // ۱. همه دسته‌های فعلی را پاک کن
+    entity.Categories.Clear();
+
+    // ۲. اول تغییرات حذف را ذخیره کن
+    await _uow.SaveChangesAsync(ct);
+
+    // ۳. دسته‌های جدید را اضافه کن
+    if (desiredIds.Count > 0)
     {
-        var entity = await _repo.GetByIdAsync(id, ct)
-            ?? throw new NotFoundException(MessageKeys.ContractNotFound);
+        var categories = await _categoryRepo.GetByIdsAsync(desiredIds, ct);
 
-        var contractNumber = request.ContractNumber.Trim();
+        foreach (var cat in categories)
+            entity.Categories.Add(cat);
 
-        if (await _repo.ExistsContractNumberAsync(contractNumber, id, ct))
-            throw new BadRequestException(MessageKeys.ContractNumberAlreadyExists);
-
-        if (request.FinishedDate.HasValue && request.FinishedDate < request.StartDate)
-            throw new BadRequestException(MessageKeys.InvalidContractDates);
-
-        entity.Title = request.Title.Trim();
-        entity.ContractorId = request.ContractorId;
-        entity.ContractAmount = request.ContractAmount;
-        entity.ContractNumber = contractNumber;
-        entity.ContractTypeId = request.ContractTypeId;
-        entity.StartDate    = DateOnly.FromDateTime(request.StartDate);
-        entity.FinishedDate = request.FinishedDate is null 
-        ? null 
-        : DateOnly.FromDateTime(request.FinishedDate.Value);
-        
-        if (request.CategoryIds is { Count: > 0 })
-        {
-            var categories = await _categoryRepo.GetByIdsAsync(request.CategoryIds, ct);
-            foreach (var cat in categories)
-                entity.Categories.Add(cat);
-        }
-        await _repo.UpdateAsync(entity, ct);
         await _uow.SaveChangesAsync(ct);
-
-        var updated = await _repo.GetByIdWithDetailsAsync(id, ct)
-            ?? throw new NotFoundException(MessageKeys.ContractNotFound);
-
-        return MapToDto(updated);
     }
+    // ==================================================
+
+    var updated = await _repo.GetByIdWithDetailsAsync(id, ct)
+        ?? throw new NotFoundException(MessageKeys.ContractNotFound);
+
+    return MapToDto(updated);
+}
 
     public async Task DeleteAsync(Guid id, CancellationToken ct = default)
     {
@@ -181,7 +213,7 @@ public class ContractService : IContractService
         ContractorName = GetContractorDisplayName(entity),
         ContractAmount = entity.ContractAmount ?? 0,
         ContractNumber = entity.ContractNumber,
-        StartDate = entity.StartDate ?? default,
+        StartDate = entity.StartDate ,
         FinishedDate = entity.FinishedDate,
         Categories = entity.Categories?
             .Select(c => new LookupItemDto

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.Extensions.FileProviders;
 using WMS.API.DependencyInjection;
 using WMS.API.Middleware;
 using WMS.Infrastructure;
@@ -25,6 +26,20 @@ builder.Services.Configure<FormOptions>(options =>
 });
 
 var app = builder.Build();
+
+var storageRoot = builder.Configuration["Storage:RootPath"] ?? "uploads";
+var uploadsPath = Path.IsPathRooted(storageRoot)
+    ? storageRoot
+    : Path.GetFullPath(Path.Combine(app.Environment.ContentRootPath, storageRoot));
+
+// اگر پوشه وجود نداشت، بساز
+Directory.CreateDirectory(uploadsPath);
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(uploadsPath),
+    RequestPath = "/uploads"
+});
 
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
