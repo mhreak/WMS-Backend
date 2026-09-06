@@ -21,4 +21,5 @@ public class EntityAttachmentDto
     public long Size { get; set; }
     public string Url { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
+    public string? ThumbnailUrl { get; set; }
 }

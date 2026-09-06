@@ -65,7 +65,7 @@ public class ContractorStatementDto
     public string? FileName { get; set; }
     public string? FilePath { get; set; }
 
-    public long GrossAmount { get; set; }      // مبلغ ناخالص (Amount اصلی)
+    public long Amount { get; set; }      // مبلغ ناخالص (Amount اصلی)
     public List<StatementExtraOrDeductionItemDto> Extras { get; set; } = new();       // اضافات
     public List<StatementExtraOrDeductionItemDto> Deductions { get; set; } = new();   // کسورات
     public long TotalExtra { get; set; }

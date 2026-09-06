@@ -41,6 +41,8 @@ public class EntityAttachmentConfiguration : IEntityTypeConfiguration<EntityAtta
         builder.Property(x => x.IsDeleted)
             .IsRequired()
             .HasDefaultValue(false);
+        
+        builder.Property(x => x.ThumbnailFileName).HasMaxLength(255);
 
         builder.HasOne(x => x.AttachmentType)
             .WithMany(t => t.EntityAttachments)

@@ -22,4 +22,6 @@ public class EntityAttachment : BaseEntity
     public string Extension { get; set; } = string.Empty;
 
     public long Size { get; set; }
+
+    public string? ThumbnailFileName { get; set; }
 }

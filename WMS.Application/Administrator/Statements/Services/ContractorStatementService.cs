@@ -57,6 +57,7 @@ public class ContractorStatementService : IContractorStatementService
             StatementDate = request.StatementDate,
             FileId = request.FileId?? null,
             Amount = request.Amount,
+            Title = request.Title,
             Description = request.Description?.Trim(),
             CreatedAt = DateTime.UtcNow
         };
@@ -166,7 +167,7 @@ private ContractorStatementDto MapToDto(ContractorStatement e)
         FileId = e.FileId,
         FileName = e.Attachment?.FileName,
         FilePath = e.Attachment != null ? BuildAttachmentUrl(e.Attachment) : null,
-        GrossAmount = e.Amount,
+        Amount = e.Amount,
         Extras = extras,
         Deductions = deductions,
         TotalExtra = totalExtra,
