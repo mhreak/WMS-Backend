@@ -39,6 +39,21 @@ public class ContractConfiguration : IEntityTypeConfiguration<Contract>
         builder.HasIndex(x => x.StartDate);
         builder.HasIndex(x => x.ContractTypeStateId);
         builder.HasIndex(x => x.ContractTypeId);
+
+    builder.HasOne(x => x.File)
+        .WithMany()
+        .HasForeignKey(x => x.FileId)
+        .OnDelete(DeleteBehavior.Restrict)
+        .IsRequired(false);
+
+    builder.HasOne(x => x.AttachmentFile)
+        .WithMany()
+        .HasForeignKey(x => x.AttachmentFileId)
+        .OnDelete(DeleteBehavior.Restrict)
+        .IsRequired(false);
+
+    builder.HasIndex(x => x.FileId);
+    builder.HasIndex(x => x.AttachmentFileId);
         
 
         // داخل ContractConfiguration:

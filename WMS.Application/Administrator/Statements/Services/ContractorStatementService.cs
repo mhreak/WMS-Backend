@@ -1,4 +1,5 @@
 using WMS.Application.Administrator.Attachments.Interfaces;
+using WMS.Application.Administrator.Contracts.DTOs;
 using WMS.Application.Administrator.Contracts.Interfaces;
 using WMS.Application.Administrator.Labels.Interfaces;
 using WMS.Application.Administrator.Statements.DTOs;
@@ -73,6 +74,7 @@ public class ContractorStatementService : IContractorStatementService
             Amount = request.Amount,
             Description = request.Description?.Trim(),
             Title = request.Title.Trim(),
+            FileId = request.FileId,
             CreatedAt = DateTime.UtcNow
         };
 
@@ -101,6 +103,7 @@ public class ContractorStatementService : IContractorStatementService
         entity.Amount = request.Amount;
         entity.Description = request.Description?.Trim();
         entity.Title = request.Title.Trim();
+        entity.FileId = request.FileId;
 
         await _repo.UpdateAsync(entity, ct);
         await _uow.SaveChangesAsync(ct);
@@ -199,15 +202,18 @@ public class ContractorStatementService : IContractorStatementService
             ContractTypeStepId = e.ContractTypeStepId,
             ContractTypeStepTitle = e.ContractTypeStep?.Title,
             StatementDate = e.StatementDate,
-            Attachments = attachments.Select(a => new StatementAttachmentDto
+           FileId = e.FileId,
+            File = e.File is null ? null : new FileInfoDto
             {
-                Id = a.Id,
-                FileName = a.FileName,
-                Extension = a.Extension,
-                Url = a.Url,
-                ThumbnailUrl = a.ThumbnailUrl,
-                Size = a.Size
-            }).ToList(),
+                Id = e.File.Id,
+                FileName = e.File.FileName,
+                Path = e.File.Path.StartsWith("/") ? e.File.Path : "/" + e.File.Path.Replace("\\", "/"),
+                ThumbnailPath = string.IsNullOrEmpty(e.File.ThumbnailPath)
+                    ? null
+                    : (e.File.ThumbnailPath.StartsWith("/") ? e.File.ThumbnailPath : "/" + e.File.ThumbnailPath.Replace("\\", "/")),
+                Extension = e.File.Extension,
+                Size = e.File.Size
+            },
             Amount = e.Amount,
             Extras = extras,
             Deductions = deductions,

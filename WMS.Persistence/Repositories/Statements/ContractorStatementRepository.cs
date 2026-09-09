@@ -18,6 +18,7 @@ public class ContractorStatementRepository : IContractorStatementRepository
             .AsNoTracking()
             .Include(x => x.Contract)
             .Include(x => x.ContractTypeStep)
+            .Include(x => x.File)
             .Include(x => x.ExtraOrDeductions)
                 .ThenInclude(i => i.Rule)
                     .ThenInclude(r => r.ExtraOrDeductionType)
@@ -46,6 +47,7 @@ public class ContractorStatementRepository : IContractorStatementRepository
         return await _db.ContractorStatement
             .Include(x => x.Contract)
             .Include(x => x.ContractTypeStep)
+            .Include(x => x.File)
             .Include(x => x.ExtraOrDeductions)
                 .ThenInclude(i => i.Rule)
                     .ThenInclude(r => r.ExtraOrDeductionType)

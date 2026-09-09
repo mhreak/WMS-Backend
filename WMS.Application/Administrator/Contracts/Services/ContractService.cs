@@ -77,6 +77,8 @@ public async Task<ContractDto> CreateAsync(CreateContractRequest request, Cancel
         FinishedDate = request.FinishedDate.HasValue
             ? DateOnly.FromDateTime(request.FinishedDate.Value)
             : null,
+        FileId = request.FileId,
+        AttachmentFileId = request.AttachmentFileId,
         CreatedAt = DateTime.UtcNow
     };
 
@@ -149,6 +151,8 @@ public async Task<ContractDto> CreateAsync(CreateContractRequest request, Cancel
     entity.FinishedDate = request.FinishedDate.HasValue
         ? DateOnly.FromDateTime(request.FinishedDate.Value)
         : null;
+    entity.FileId = request.FileId;
+    entity.AttachmentFileId = request.AttachmentFileId;
     entity.UpdatedAt = DateTime.UtcNow;
 
     // ========== مدیریت Categories (روش مقاوم) ==========
@@ -231,6 +235,26 @@ public async Task<ContractDto> CreateAsync(CreateContractRequest request, Cancel
 
         ContractTypeId = entity.ContractTypeId,
         ContractTypeTitle = entity.ContractType?.Title ?? string.Empty,
+        FileId = entity.FileId,
+        File = entity.File is not null ? new FileInfoDto
+        {
+            Id = entity.File.Id,
+            FileName = entity.File.FileName,
+            Path = entity.File.Path,
+            ThumbnailPath = entity.File.ThumbnailPath,
+            Extension = entity.File.Extension,
+            Size = entity.File.Size
+        } : null,
+        AttachmentFileId = entity.AttachmentFileId,
+        AttachmentFile = entity.AttachmentFile is not null ? new FileInfoDto
+        {
+            Id = entity.AttachmentFile.Id,
+            FileName = entity.AttachmentFile.FileName,
+            Path = entity.AttachmentFile.Path,
+            ThumbnailPath = entity.AttachmentFile.ThumbnailPath,
+            Extension = entity.AttachmentFile.Extension,
+            Size = entity.AttachmentFile.Size
+        } : null,
 
         CreatedAt = entity.CreatedAt,
         UpdatedAt = entity.UpdatedAt

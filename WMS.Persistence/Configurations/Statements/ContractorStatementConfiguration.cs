@@ -30,5 +30,13 @@ public class ContractorStatementConfiguration : IEntityTypeConfiguration<Contrac
         builder.HasIndex(x => x.ContractId);
         builder.HasIndex(x => x.ContractTypeStepId);
         builder.HasIndex(x => x.IsDeleted);
+
+        builder.HasOne(x => x.File)
+        .WithMany()
+        .HasForeignKey(x => x.FileId)
+        .OnDelete(DeleteBehavior.Restrict)
+        .IsRequired(false);
+
+        builder.HasIndex(x => x.FileId);
     }
 }

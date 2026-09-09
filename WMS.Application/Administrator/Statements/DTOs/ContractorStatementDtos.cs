@@ -1,3 +1,4 @@
+using WMS.Application.Administrator.Contracts.DTOs;
 using WMS.Domain.Enums;
 
 namespace WMS.Application.Administrator.Statements.DTOs;
@@ -10,6 +11,7 @@ public class CreateContractorStatementRequest
     public long Amount { get; set; }
     public string? Description { get; set; }
     public string Title { get; set; } = string.Empty;
+    public Guid? FileId { get; set; }
 }
 
 public class UpdateContractorStatementRequest
@@ -19,6 +21,7 @@ public class UpdateContractorStatementRequest
     public long Amount { get; set; }
     public string? Description { get; set; }
     public string Title { get; set; } = string.Empty;
+    public Guid? FileId { get; set; }
 }
 
 public class ContractorStatementFilterRequest
@@ -68,8 +71,10 @@ public class ContractorStatementDto
     public Guid ContractTypeStepId { get; set; }
     public string? ContractTypeStepTitle { get; set; }
     public DateOnly StatementDate { get; set; }
-    public string? FilePath { get; set; }
-    public List<StatementAttachmentDto> Attachments { get; set; } = new();
+    // public string? FilePath { get; set; }
+    // public List<StatementAttachmentDto> Attachments { get; set; } = new();
+    public Guid? FileId { get; set; }
+    public FileInfoDto? File { get; set; }
     public long Amount { get; set; }      // مبلغ ناخالص (Amount اصلی)
     public List<StatementExtraOrDeductionItemDto> Extras { get; set; } = new();       // اضافات
     public List<StatementExtraOrDeductionItemDto> Deductions { get; set; } = new();   // کسورات

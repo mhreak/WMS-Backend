@@ -20,6 +20,8 @@ public class CreateContractRequest
     public List<Guid>? CategoryIds { get; set; }
     public bool IsActive { get; set; } = true;
     public Guid? ContractTypeStateId { get; set; }
+    public Guid? FileId { get; set; }
+    public Guid? AttachmentFileId { get; set; }
 }
 
 public class UpdateContractRequest
@@ -37,6 +39,18 @@ public class UpdateContractRequest
     public bool IsActive { get; set; }
     public List<Guid>? CategoryIds { get; set; }
     public Guid? ContractTypeStateId { get; set; }
+    public Guid? FileId { get; set; }
+    public Guid? AttachmentFileId { get; set; }
+}
+
+public class FileInfoDto
+{
+    public Guid Id { get; set; }
+    public string FileName { get; set; } = string.Empty;
+    public string Path { get; set; } = string.Empty;
+    public string? ThumbnailPath { get; set; }
+    public string Extension { get; set; } = string.Empty;
+    public long Size { get; set; }
 }
 
 public class ContractDto
@@ -69,6 +83,12 @@ public class ContractDto
     public DateTime? UpdatedAt { get; set; }
     public Guid? ContractTypeStateId { get; set; }
     public string ContractTypeStateTitle { get; set; } = string.Empty;
+
+    public Guid? FileId { get; set; }
+    public FileInfoDto? File { get; set; }
+
+    public Guid? AttachmentFileId { get; set; }
+    public FileInfoDto? AttachmentFile { get; set; }
 }
 public class ContractFilterRequest
 {

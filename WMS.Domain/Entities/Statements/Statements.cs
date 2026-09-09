@@ -32,5 +32,10 @@ public class ContractorStatement : BaseEntity
     [MaxLength(300)]
     public string Title { get; set; } = string.Empty;
 
+    public Guid? FileId { get; set; }
+
+    [ForeignKey(nameof(FileId))]
+    public virtual FileAsset? File { get; set; }   // نه EntityAttachment
+
     public virtual ICollection<ContractorStatementExtraOrDeduction> ExtraOrDeductions { get; set; } = new List<ContractorStatementExtraOrDeduction>();
 }
