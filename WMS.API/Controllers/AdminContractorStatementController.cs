@@ -62,11 +62,11 @@ public class AdminContractorStatementController : AdminBaseController
     }
 
     // مدیریت اقلام اضافه/کسر همین صورت‌وضعیت (جایگزینی کامل لیست)
-    [HttpPut("{id:guid}/extra-or-deductions")]
-    public async Task<IActionResult> SetExtraOrDeductions(Guid id, [FromBody] SetStatementExtraOrDeductionsRequest request, CancellationToken ct)
-    {
-        var result = await _service.SetExtraOrDeductionsAsync(id, request, ct);
-        var message = await _localizer.LocalizeAsync(MessageKeys.ContractorStatementExtraOrDeductionsSet);
-        return Ok(ApiResult.Success(result, message));
-    }
+    // [HttpPut("{id:guid}/extra-or-deductions")]
+    // public async Task<IActionResult> SetExtraOrDeductions(Guid id, [FromBody] SetStatementExtraOrDeductionsRequest request, CancellationToken ct)
+    // {
+    //     var result = await _service.SetExtraOrDeductionsAsync(id, request, ct);
+    //     var message = await _localizer.LocalizeAsync(MessageKeys.ContractorStatementExtraOrDeductionsSet);
+    //     return Ok(ApiResult.Success(result, message));
+    // }
 }

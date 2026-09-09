@@ -169,7 +169,22 @@
 "DeadlineAlarmRetrieved": "الارم دریافت شد.",
 "DueAlarmsRetrieved": "لیست الارم‌های سررسیدشده دریافت شد." ,
 "StepIdRequiredForContractStepAlarm" : "StepId برای الارم‌های مرحله قرارداد الزامی است.",
-"InvalidReferenceDateTypeForEntity" : "نوع تاریخ مرجع انتخاب‌شده برای این موجودیت معتبر نیست."
+"InvalidReferenceDateTypeForEntity" : "نوع تاریخ مرجع انتخاب‌شده برای این موجودیت معتبر نیست.",
+"RuleNotApplicableToContract" : "این قانون برای قرارداد انتخاب‌شده قابل اعمال نیست.",
+
+
+  "NotificationCreated": "نوتیفیکیشن با موفقیت ایجاد شد.",
+  "NotificationUpdated": "نوتیفیکیشن با موفقیت ویرایش شد.",
+  "NotificationRetrieved": "نوتیفیکیشن با موفقیت دریافت شد.",
+  "NotificationsRetrieved": "نوتیفیکیشن‌ها با موفقیت دریافت شدند.",
+  "NotificationDeleted": "نوتیفیکیشن با موفقیت حذف شد.",
+  "NotificationsEvaluated": "نوتیفیکیشن‌ها با موفقیت ارزیابی شدند.",
+  "NotificationNotFound": "نوتیفیکیشن یافت نشد.",
+  "NotificationTitleRequired": "عنوان نوتیفیکیشن الزامی است.",
+  "NotificationFieldIndicatorRequired": "شاخص فیلد الزامی است.",
+  "InvalidEntityTypeForNotification": "نوع موجودیت برای نوتیفیکیشن معتبر نیست.",
+  "InvalidFieldIndicatorForEntity": "شاخص فیلد برای این نوع موجودیت معتبر نیست."
+
 
 
 

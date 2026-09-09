@@ -1,27 +1,40 @@
 using WMS.Application.Administrator.Attachments.Interfaces;
+using WMS.Application.Administrator.Contracts.Interfaces;
+using WMS.Application.Administrator.Labels.Interfaces;
 using WMS.Application.Administrator.Statements.DTOs;
 using WMS.Application.Administrator.Statements.Interfaces;
 using WMS.Application.Common.Exceptions;
 using WMS.Application.Common.Interfaces;
 using WMS.Application.Common.Localization;
 using WMS.Application.Common.Pagination;
+using WMS.Domain.Entities.Contracts;
 using WMS.Domain.Entities.Statements;
+using WMS.Domain.Enums;
 
 namespace WMS.Application.Administrator.Statements.Services;
 
 public class ContractorStatementService : IContractorStatementService
 {
     private readonly IContractorStatementRepository _repo;
-    private readonly IEntityAttachmentService _attachmentService;   // جدید، به‌جای IEntityAttachmentRepository/IConfiguration
+    private readonly IEntityAttachmentService _attachmentService;
+    private readonly IContractRepository _contractRepo;
+    private readonly IExtraOrDeductionRuleRepository _ruleRepo;
+    private readonly ILabelRepository _labelRepo;
     private readonly IUnitOfWork _uow;
 
     public ContractorStatementService(
         IContractorStatementRepository repo,
         IEntityAttachmentService attachmentService,
+        IContractRepository contractRepo,
+        IExtraOrDeductionRuleRepository ruleRepo,
+        ILabelRepository labelRepo,
         IUnitOfWork uow)
     {
         _repo = repo;
         _attachmentService = attachmentService;
+        _contractRepo = contractRepo;
+        _ruleRepo = ruleRepo;
+        _labelRepo = labelRepo;
         _uow = uow;
     }
 
@@ -66,11 +79,16 @@ public class ContractorStatementService : IContractorStatementService
         await _repo.AddAsync(entity, ct);
         await _uow.SaveChangesAsync(ct);
 
+        // ===== اعمال خودکار Ruleهای منطبق =====
+        await ApplyMatchingRulesAsync(entity, ct);
+        await _uow.SaveChangesAsync(ct);
+        // =======================================
+
         var created = await _repo.GetByIdWithDetailsAsync(entity.Id, ct)
             ?? throw new NotFoundException(MessageKeys.ContractorStatementNotFound);
 
-        // تازه ساخته شده، هنوز فایلی وصل نشده
-        return MapToDto(created, new List<Administrator.Attachments.DTOs.EntityAttachmentDto>());
+        var attachments = await _attachmentService.GetByEntityIdAsync(entity.Id, null, ct);
+        return MapToDto(created, attachments);
     }
 
     public async Task<ContractorStatementDto> UpdateAsync(Guid id, UpdateContractorStatementRequest request, CancellationToken ct = default)
@@ -86,6 +104,11 @@ public class ContractorStatementService : IContractorStatementService
 
         await _repo.UpdateAsync(entity, ct);
         await _uow.SaveChangesAsync(ct);
+
+        // ===== چون Amount ممکنه عوض شده باشه، Ruleهای درصدی باید دوباره حساب بشن =====
+        await ApplyMatchingRulesAsync(entity, ct);
+        await _uow.SaveChangesAsync(ct);
+        // ==========================================================================
 
         var updated = await _repo.GetByIdWithDetailsAsync(id, ct)
             ?? throw new NotFoundException(MessageKeys.ContractorStatementNotFound);
@@ -105,35 +128,45 @@ public class ContractorStatementService : IContractorStatementService
         await _uow.SaveChangesAsync(ct);
     }
 
-    public async Task<ContractorStatementDto> SetExtraOrDeductionsAsync(Guid statementId, SetStatementExtraOrDeductionsRequest request, CancellationToken ct = default)
+    // ===== منطق اصلی تطبیق خودکار =====
+    private async Task ApplyMatchingRulesAsync(ContractorStatement statement, CancellationToken ct)
     {
-        var statement = await _repo.GetByIdAsync(statementId, ct)
-            ?? throw new NotFoundException(MessageKeys.ContractorStatementNotFound);
+        var contract = await _contractRepo.GetByIdWithDetailsAsync(statement.ContractId, ct);
 
-        var ruleIds = request.Items.Select(x => x.RuleId).Distinct().ToList();
-        var rules = await _repo.GetRulesByIdsAsync(ruleIds, ct);
+        if (contract?.ContractTypeId is null)
+        {
+            await _repo.ReplaceItemsAsync(statement.Id, new List<ContractorStatementExtraOrDeduction>(), ct);
+            return;
+        }
 
-        if (rules.Count != ruleIds.Count)
-            throw new NotFoundException(MessageKeys.ExtraOrDeductionRuleNotFoundInSet);
+        var candidateRules = await _ruleRepo.GetActiveRulesByContractTypeAsync(contract.ContractTypeId.Value, ct);
 
-        var newItems = request.Items.Select(i => new ContractorStatementExtraOrDeduction
+        var contractCategoryIds = contract.Categories.Select(c => c.Id).ToHashSet();
+        var contractorCategoryIds = contract.Contractor?.Categories.Select(c => c.Id).ToHashSet() ?? new HashSet<Guid>();
+        var contractLabelIds = (await _labelRepo.GetEntityLabelsAsync(contract.Id, ct))
+            .Select(el => el.LabelId).ToHashSet();
+
+        var matchedRules = candidateRules.Where(rule =>
+            (!rule.ContractCategoryId.HasValue || contractCategoryIds.Contains(rule.ContractCategoryId.Value)) &&
+            (!rule.ContractorCategoryId.HasValue || contractorCategoryIds.Contains(rule.ContractorCategoryId.Value)) &&
+            (!rule.ContractLabelId.HasValue || contractLabelIds.Contains(rule.ContractLabelId.Value)) &&
+            (!rule.ContractorType.HasValue || contract.Contractor?.Type == rule.ContractorType.Value)
+        ).ToList();
+
+        var items = matchedRules.Select(rule => new ContractorStatementExtraOrDeduction
         {
             Id = Guid.NewGuid(),
-            StatementId = statementId,
-            RuleId = i.RuleId,
-            Amount = i.Amount,
+            StatementId = statement.Id,
+            RuleId = rule.Id,
+            Amount = rule.AmountType == AmountType.Percentage
+                ? (statement.Amount * rule.Amount) / 100
+                : rule.Amount,
             CreatedAt = DateTime.UtcNow
         }).ToList();
 
-        await _repo.ReplaceItemsAsync(statementId, newItems, ct);
-        await _uow.SaveChangesAsync(ct);
-
-        var updated = await _repo.GetByIdWithDetailsAsync(statementId, ct)
-            ?? throw new NotFoundException(MessageKeys.ContractorStatementNotFound);
-
-        var attachments = await _attachmentService.GetByEntityIdAsync(statementId, null, ct);
-        return MapToDto(updated, attachments);
+        await _repo.ReplaceItemsAsync(statement.Id, items, ct);
     }
+    // ====================================
 
     private static ContractorStatementDto MapToDto(
         ContractorStatement e,
@@ -147,8 +180,8 @@ public class ContractorStatementService : IContractorStatementService
                 RuleId = i.RuleId,
                 RuleTitle = i.Rule?.ExtraOrDeductionType?.Title,
                 IsExtra = i.Rule?.ExtraOrDeductionType?.IsExtra ?? false,
-                AmountType = i.Rule?.AmountType ?? Domain.Enums.AmountType.Fixed,
-                PercentageValue = i.Rule?.AmountType == Domain.Enums.AmountType.Percentage ? i.Rule.Amount : null,
+                AmountType = i.Rule?.AmountType ?? AmountType.Fixed,
+                PercentageValue = i.Rule?.AmountType == AmountType.Percentage ? i.Rule.Amount : null,
                 Amount = i.Amount
             }).ToList();
 

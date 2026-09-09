@@ -10,7 +10,7 @@ using WMS.Domain.Entities.Attachments;
 using WMS.Domain.Entities.ContractTypes;
 using WMS.Domain.Entities.Contracts;
 using WMS.Domain.Entities.Statements;
-using WMS.Domain.Entities.Alarms;
+using WMS.Domain.Entities.Notifications;
 
 namespace WMS.Persistence.Context;
 
@@ -38,7 +38,7 @@ public class AppDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
     public DbSet<ContractorStatement> ContractorStatement => Set<ContractorStatement>();
     public DbSet<ExtraOrDeductionType> ExtraOrDeductionType => Set<ExtraOrDeductionType>();
     public DbSet<ExtraOrDeductionRule> ExtraOrDeductionRule => Set<ExtraOrDeductionRule>();
-    public DbSet<DeadlineAlarm> DeadlineAlarm => Set<DeadlineAlarm>();
+    public DbSet<Notification> Notifications => Set<Notification>();
     public DbSet<ContractorStatementExtraOrDeduction> ContractorStatementExtraOrDeduction => Set<ContractorStatementExtraOrDeduction>();
     protected override void OnModelCreating(ModelBuilder builder)
     {

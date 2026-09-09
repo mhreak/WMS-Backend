@@ -16,9 +16,9 @@ using WMS.Application.Administrator.ContractTypeStates.Interfaces;
 using WMS.Application.Administrator.ContractTypeStates.Services;
 using WMS.Application.Administrator.Statements.Interfaces;
 using WMS.Application.Administrator.Statements.Services;
-using WMS.Application.Administrator.Alarms.Interfaces;
-using WMS.Application.Administrator.Alarms.Services;
 using WMS.Application.Common.File.Services;
+using WMS.Application.Administrator.Notifications.Interfaces;
+using WMS.Application.Administrator.Notifications.Services;
 
 namespace WMS.API.DependencyInjection;
 
@@ -42,8 +42,8 @@ public static class CoreApplicationServiceDependencyInjection
         services.AddScoped<IExtraOrDeductionTypeService, ExtraOrDeductionTypeService>();
         services.AddScoped<IExtraOrDeductionRuleService, ExtraOrDeductionRuleService>();
         services.AddScoped<IContractorStatementService, ContractorStatementService>();
-        services.AddScoped<IDeadlineAlarmService, DeadlineAlarmService>();
         services.AddScoped<IImageThumbnailService, ImageThumbnailService>();
+        services.AddScoped<INotificationService, NotificationService>();
         return services;
     }
 }

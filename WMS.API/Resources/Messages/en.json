@@ -134,7 +134,18 @@
 "DeadlineAlarmRetrieved": "Alarm retrieved.",
 "DueAlarmsRetrieved": "Due alarms retrieved.",
 "StepIdRequiredForContractStepAlarm" : "StepId is required for contract step alarms." ,
-"InvalidReferenceDateTypeForEntity" : " The selected reference date type is not valid for this entity."
+"InvalidReferenceDateTypeForEntity" : " The selected reference date type is not valid for this entity." ,
+"NotificationCreated": "Notification created successfully.",
+  "NotificationUpdated": "Notification updated successfully.",
+  "NotificationRetrieved": "Notification retrieved successfully.",
+  "NotificationsRetrieved": "Notifications retrieved successfully.",
+  "NotificationDeleted": "Notification deleted successfully.",
+  "NotificationsEvaluated": "Notifications evaluated successfully.",
+  "NotificationNotFound": "Notification not found.",
+  "NotificationTitleRequired": "Notification title is required.",
+  "NotificationFieldIndicatorRequired": "Field indicator is required.",
+  "InvalidEntityTypeForNotification": "Invalid entity type for notification.",
+  "InvalidFieldIndicatorForEntity": "Invalid field indicator for this entity type."
 
 
 

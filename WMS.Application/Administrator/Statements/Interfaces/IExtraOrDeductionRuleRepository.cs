@@ -11,4 +11,5 @@ public interface IExtraOrDeductionRuleRepository
     Task<ExtraOrDeductionRule?> GetByIdWithDetailsAsync(Guid id, CancellationToken ct = default);
     Task AddAsync(ExtraOrDeductionRule entity, CancellationToken ct = default);
     Task UpdateAsync(ExtraOrDeductionRule entity, CancellationToken ct = default);
+    Task<List<ExtraOrDeductionRule>> GetActiveRulesByContractTypeAsync(Guid contractTypeId, CancellationToken ct = default);
 }

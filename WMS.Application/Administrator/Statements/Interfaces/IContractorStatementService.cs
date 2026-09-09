@@ -10,5 +10,5 @@ public interface IContractorStatementService
     Task<ContractorStatementDto> CreateAsync(CreateContractorStatementRequest request, CancellationToken ct = default);
     Task<ContractorStatementDto> UpdateAsync(Guid id, UpdateContractorStatementRequest request, CancellationToken ct = default);
     Task DeleteAsync(Guid id, CancellationToken ct = default);
-    Task<ContractorStatementDto> SetExtraOrDeductionsAsync(Guid statementId, SetStatementExtraOrDeductionsRequest request, CancellationToken ct = default);
+    
 }

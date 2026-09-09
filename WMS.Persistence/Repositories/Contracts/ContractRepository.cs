@@ -28,6 +28,7 @@ public class ContractRepository : IContractRepository
     {
         return await _db.Contract
             .Include(x => x.Contractor)
+                .ThenInclude(c => c!.Categories)  
             .Include(x => x.Categories)
             .Include(x => x.ContractType)
             .Include(x => x.ContractSteps)

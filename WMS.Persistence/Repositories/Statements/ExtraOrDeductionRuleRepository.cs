@@ -76,4 +76,14 @@ public class ExtraOrDeductionRuleRepository : IExtraOrDeductionRuleRepository
         _db.ExtraOrDeductionRule.Update(entity);
         return Task.CompletedTask;
     }
+    public async Task<List<ExtraOrDeductionRule>> GetActiveRulesByContractTypeAsync(Guid contractTypeId, CancellationToken ct = default)
+{
+    return await _db.ExtraOrDeductionRule
+        .Include(x => x.ExtraOrDeductionType)
+        .Where(x =>
+            !x.IsDeleted &&
+            x.ExtraOrDeductionType.IsActive &&
+            x.ContractTypeId == contractTypeId)
+        .ToListAsync(ct);
+}
 }

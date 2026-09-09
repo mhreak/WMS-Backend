@@ -190,5 +190,18 @@ public const string DueAlarmsRetrieved = "DueAlarmsRetrieved";
 public const string StepIdRequiredForContractStepAlarm = "StepIdRequiredForContractStepAlarm";
 
 public const string InvalidReferenceDateTypeForEntity = "InvalidReferenceDateTypeForEntity";
+public const string RuleNotApplicableToContract = "RuleNotApplicableToContract";
+
+public const string NotificationCreated = "NotificationCreated";
+public const string NotificationUpdated = "NotificationUpdated";
+public const string NotificationRetrieved = "NotificationRetrieved";
+public const string NotificationsRetrieved = "NotificationsRetrieved";
+public const string NotificationDeleted = "NotificationDeleted";
+public const string NotificationsEvaluated = "NotificationsEvaluated";
+public const string NotificationNotFound = "NotificationNotFound";
+public const string NotificationTitleRequired = "NotificationTitleRequired";
+public const string NotificationFieldIndicatorRequired = "NotificationFieldIndicatorRequired";
+public const string InvalidEntityTypeForNotification = "InvalidEntityTypeForNotification";
+public const string InvalidFieldIndicatorForEntity = "InvalidFieldIndicatorForEntity";
 
 }
