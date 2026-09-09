@@ -11,6 +11,7 @@ using WMS.Domain.Entities.ContractTypes;
 using WMS.Domain.Entities.Contracts;
 using WMS.Domain.Entities.Statements;
 using WMS.Domain.Entities.Notifications;
+using WMS.Domain.Entities.CustomFields;
 
 namespace WMS.Persistence.Context;
 
@@ -39,6 +40,8 @@ public class AppDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
     public DbSet<ExtraOrDeductionType> ExtraOrDeductionType => Set<ExtraOrDeductionType>();
     public DbSet<ExtraOrDeductionRule> ExtraOrDeductionRule => Set<ExtraOrDeductionRule>();
     public DbSet<Notification> Notifications => Set<Notification>();
+    public DbSet<EntityCustomField> EntityCustomField => Set<EntityCustomField>();
+    public DbSet<EntityCustomFieldValue> EntityCustomField_Entity => Set<EntityCustomFieldValue>();
     public DbSet<ContractorStatementExtraOrDeduction> ContractorStatementExtraOrDeduction => Set<ContractorStatementExtraOrDeduction>();
     protected override void OnModelCreating(ModelBuilder builder)
     {
