@@ -203,5 +203,6 @@ public const string NotificationTitleRequired = "NotificationTitleRequired";
 public const string NotificationFieldIndicatorRequired = "NotificationFieldIndicatorRequired";
 public const string InvalidEntityTypeForNotification = "InvalidEntityTypeForNotification";
 public const string InvalidFieldIndicatorForEntity = "InvalidFieldIndicatorForEntity";
+public const string MandatoryStepCannotBeSkipped = "MandatoryStepCannotBeSkipped";
 
 }

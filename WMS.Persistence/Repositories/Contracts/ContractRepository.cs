@@ -190,53 +190,152 @@ public async Task MoveStepAsync(
     if (!contractExists)
         throw new NotFoundException(MessageKeys.ContractNotFound);
 
-    var targetStepExists = await _db.ContractTypeStep
-        .AnyAsync(x => x.Id == request.TargetStepId && !x.IsDeleted, ct);
-
-    if (!targetStepExists)
-        throw new NotFoundException(MessageKeys.StepNotFound);
+    var targetStep = await _db.ContractTypeStep
+        .FirstOrDefaultAsync(x => x.Id == request.TargetStepId && !x.IsDeleted, ct)
+        ?? throw new NotFoundException(MessageKeys.StepNotFound);
 
     var today = DateOnly.FromDateTime(DateTime.UtcNow);
-    var finishedDate = request.FinishedDate ?? today;
     var startDate = request.StartDate ?? today;
+    var finishedDate = request.FinishedDate ?? today;
 
-    // مرحله باز فعلی
+    // مرحله‌ی باز فعلی
     var current = await _db.Contract_ContractTypeStep
+        .Include(x => x.Step)
         .FirstOrDefaultAsync(x =>
             x.ContractId == contractId &&
             x.FinishDate == null, ct);
 
-    if (current != null)
+    // حالت اول ورود قرارداد (هیچ مرحله‌ی بازی نداره)
+    if (current is null)
     {
-         if (current.StepId == request.TargetStepId)
+        var freshRow = await _db.Contract_ContractTypeStep
+            .FirstOrDefaultAsync(x => x.ContractId == contractId && x.StepId == targetStep.Id, ct);
+
+        if (freshRow is null)
+        {
+            await _db.Contract_ContractTypeStep.AddAsync(new ContractStep
+            {
+                ContractId = contractId,
+                StepId = targetStep.Id,
+                StartDate = startDate,
+                FinishDate = null
+            }, ct);
+        }
+        else
+        {
+            freshRow.FinishDate = null;
+        }
+
+        await _db.SaveChangesAsync(ct);
         return;
-
-    if (current.Step != null && current.Step.IsMandatory)
-        throw new BadRequestException(MessageKeys.MandatoryStepCannotBeMoved);
-
-    current.FinishDate = finishedDate;
     }
 
-    var hasActiveTarget = await _db.Contract_ContractTypeStep
-        .AnyAsync(x =>
-            x.ContractId == contractId &&
-            x.StepId == request.TargetStepId &&
-            x.FinishDate == null, ct);
+    if (current.StepId == targetStep.Id)
+        return;
 
-    if (!hasActiveTarget)
+    // همه‌ی مراحل این نوع قرارداد، مرتب‌شده — برای پیداکردن مراحل بین مبدا و مقصد
+    var allSteps = await _db.ContractTypeStep
+        .Where(x => x.ContractTypeId == targetStep.ContractTypeId && !x.IsDeleted)
+        .OrderBy(x => x.StepOrder)
+        .ToListAsync(ct);
+
+    var currentStepDef = current.Step ?? allSteps.FirstOrDefault(s => s.Id == current.StepId);
+    if (currentStepDef is null)
+        throw new NotFoundException(MessageKeys.StepNotFound);
+
+    var isForward = targetStep.StepOrder > currentStepDef.StepOrder;
+
+    if (isForward)
     {
-        await _db.Contract_ContractTypeStep.AddAsync(new ContractStep
+        // مراحل میانی که داره ازشون رد می‌شه (بین فعلی و هدف، نه‌شامل خودشون)
+        var skippedSteps = allSteps
+            .Where(s => s.StepOrder > currentStepDef.StepOrder && s.StepOrder < targetStep.StepOrder)
+            .ToList();
+
+        var blockedStep = skippedSteps.FirstOrDefault(s => s.IsMandatory);
+        if (blockedStep != null)
+            throw new BadRequestException(MessageKeys.MandatoryStepCannotBeSkipped);
+
+        // بستن مرحله‌ی فعلی
+        current.FinishDate = finishedDate;
+        var cursorDate = finishedDate;
+
+        // رد شدن از مراحل میانی — هرکدوم همون روز باز و بسته می‌شن
+        foreach (var step in skippedSteps)
         {
-            ContractId = contractId,
-            StepId = request.TargetStepId,
-            StartDate = startDate,
-            FinishDate = null
-        }, ct);
+            var row = await _db.Contract_ContractTypeStep
+                .FirstOrDefaultAsync(x => x.ContractId == contractId && x.StepId == step.Id, ct);
+
+            if (row is null)
+            {
+                await _db.Contract_ContractTypeStep.AddAsync(new ContractStep
+                {
+                    ContractId = contractId,
+                    StepId = step.Id,
+                    StartDate = cursorDate,
+                    FinishDate = cursorDate
+                }, ct);
+            }
+            else
+            {
+                row.FinishDate = cursorDate; // اگه از قبل باز بوده (بازدید مجدد)، همین امروز می‌بندیمش
+            }
+        }
+
+        // باز کردن مرحله‌ی هدف
+        var targetRow = await _db.Contract_ContractTypeStep
+            .FirstOrDefaultAsync(x => x.ContractId == contractId && x.StepId == targetStep.Id, ct);
+
+        if (targetRow is null)
+        {
+            await _db.Contract_ContractTypeStep.AddAsync(new ContractStep
+            {
+                ContractId = contractId,
+                StepId = targetStep.Id,
+                StartDate = startDate,
+                FinishDate = null
+            }, ct);
+        }
+        else
+        {
+            targetRow.FinishDate = null; // StartDate اصلی‌ش دست‌نخورده می‌مونه
+        }
+    }
+    else
+    {
+        // بستن مرحله‌ی فعلی (که داره ترکش می‌کنه)
+        current.FinishDate = finishedDate;
+
+        // بازکردن مراحل بین هدف و فعلی (شامل خود هدف)
+        var reopenSteps = allSteps
+            .Where(s => s.StepOrder >= targetStep.StepOrder && s.StepOrder < currentStepDef.StepOrder)
+            .ToList();
+
+        foreach (var step in reopenSteps)
+        {
+            var row = await _db.Contract_ContractTypeStep
+                .FirstOrDefaultAsync(x => x.ContractId == contractId && x.StepId == step.Id, ct);
+
+            if (row != null)
+            {
+                row.FinishDate = null;   // StartDate تاریخی دست‌نخورده می‌مونه
+            }
+            else
+            {
+                // اگه قبلاً واقعاً ازش رد نشده بود (حالت غیرمنتظره)، تازه بازش می‌کنیم
+                await _db.Contract_ContractTypeStep.AddAsync(new ContractStep
+                {
+                    ContractId = contractId,
+                    StepId = step.Id,
+                    StartDate = today,
+                    FinishDate = null
+                }, ct);
+            }
+        }
     }
 
     await _db.SaveChangesAsync(ct);
 }
-
 private static string? GetContractorName(Contractor? contractor)
 {
     if (contractor is null) return null;
