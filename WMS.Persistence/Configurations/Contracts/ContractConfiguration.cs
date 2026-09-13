@@ -46,14 +46,17 @@ public class ContractConfiguration : IEntityTypeConfiguration<Contract>
         .OnDelete(DeleteBehavior.Restrict)
         .IsRequired(false);
 
-    builder.HasOne(x => x.AttachmentFile)
+    builder.HasOne(x => x.Attachment)
         .WithMany()
-        .HasForeignKey(x => x.AttachmentFileId)
+        .HasForeignKey(x => x.Attachmentid)
         .OnDelete(DeleteBehavior.Restrict)
         .IsRequired(false);
+    
+         
+    
 
     builder.HasIndex(x => x.FileId);
-    builder.HasIndex(x => x.AttachmentFileId);
+    builder.HasIndex(x => x.Attachmentid);
         
 
         // داخل ContractConfiguration:
