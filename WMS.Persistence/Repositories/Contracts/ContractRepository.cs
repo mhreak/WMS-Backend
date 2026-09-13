@@ -8,6 +8,7 @@ using WMS.Application.Common.Localization;
 using WMS.Application.Common.Pagination;
 using WMS.Domain.Entities.Contractors;
 using WMS.Domain.Entities.Contracts;
+using WMS.Domain.Enums;
 using WMS.Persistence.Context;
 
 namespace WMS.Persistence.Repositories.Contracts;
@@ -247,6 +248,10 @@ public async Task MoveStepAsync(
 
     if (isForward)
     {
+        // چک کاستوم‌فیلدهای اجباری خودِ مرحله‌ی جاری — قبل از هر کاری، باید پر شده باشن
+        if (await HasIncompleteRequiredCustomFieldsAsync(contractId, currentStepDef.Id, ct))
+            throw new BadRequestException(MessageKeys.RequiredCustomFieldsMissingOnStep);
+
         // مراحل میانی که داره ازشون رد می‌شه (بین فعلی و هدف، نه‌شامل خودشون)
         var skippedSteps = allSteps
             .Where(s => s.StepOrder > currentStepDef.StepOrder && s.StepOrder < targetStep.StepOrder)
@@ -256,11 +261,18 @@ public async Task MoveStepAsync(
         if (blockedStep != null)
             throw new BadRequestException(MessageKeys.MandatoryStepCannotBeSkipped);
 
+        // چک کاستوم‌فیلدهای اجباری هر مرحله‌ی میانی که داره ردش می‌شه
+        foreach (var step in skippedSteps)
+        {
+            if (await HasIncompleteRequiredCustomFieldsAsync(contractId, step.Id, ct))
+                throw new BadRequestException(MessageKeys.RequiredCustomFieldsMissingOnStep);
+        }
+
         // بستن مرحله‌ی فعلی
         current.FinishDate = finishedDate;
         var cursorDate = finishedDate;
 
-        // رد شدن از مراحل میانی — هرکدوم همون روز باز و بسته می‌شن
+        // رد شدن از مراحل میانی — هرکدوم همون روز باز و بسته می‌شن (رکورد تاریخی)
         foreach (var step in skippedSteps)
         {
             var row = await _db.Contract_ContractTypeStep
@@ -303,38 +315,77 @@ public async Task MoveStepAsync(
     }
     else
     {
-        // بستن مرحله‌ی فعلی (که داره ترکش می‌کنه)
+        // حرکت به عقب — بستن مرحله‌ی فعلی
         current.FinishDate = finishedDate;
 
-        // بازکردن مراحل بین هدف و فعلی (شامل خود هدف)
-        var reopenSteps = allSteps
-            .Where(s => s.StepOrder >= targetStep.StepOrder && s.StepOrder < currentStepDef.StepOrder)
-            .ToList();
+        // فقط خود مرحله‌ی هدف باز می‌شه؛ مراحل بینابینی (اگه چند مرحله برگردی عقب) بسته و به‌عنوان
+        // تاریخچه باقی می‌مونن — این‌جا اصلاح باگ تکراری‌شدن مراحل هم‌زمان انجام شده
+        var targetRow = await _db.Contract_ContractTypeStep
+            .FirstOrDefaultAsync(x => x.ContractId == contractId && x.StepId == targetStep.Id, ct);
 
-        foreach (var step in reopenSteps)
+        if (targetRow != null)
         {
-            var row = await _db.Contract_ContractTypeStep
-                .FirstOrDefaultAsync(x => x.ContractId == contractId && x.StepId == step.Id, ct);
-
-            if (row != null)
+            targetRow.FinishDate = null;   // StartDate تاریخی دست‌نخورده می‌مونه
+        }
+        else
+        {
+            await _db.Contract_ContractTypeStep.AddAsync(new ContractStep
             {
-                row.FinishDate = null;   // StartDate تاریخی دست‌نخورده می‌مونه
-            }
-            else
-            {
-                // اگه قبلاً واقعاً ازش رد نشده بود (حالت غیرمنتظره)، تازه بازش می‌کنیم
-                await _db.Contract_ContractTypeStep.AddAsync(new ContractStep
-                {
-                    ContractId = contractId,
-                    StepId = step.Id,
-                    StartDate = today,
-                    FinishDate = null
-                }, ct);
-            }
+                ContractId = contractId,
+                StepId = targetStep.Id,
+                StartDate = startDate,
+                FinishDate = null
+            }, ct);
         }
     }
 
     await _db.SaveChangesAsync(ct);
+}
+
+// ===== Helper — چک می‌کنه آیا مرحله‌ای فیلد اجباری ناقص داره یا نه =====
+private async Task<bool> HasIncompleteRequiredCustomFieldsAsync(Guid contractId, Guid stepId, CancellationToken ct)
+{
+    var candidateFields = await _db.EntityCustomField
+        .Where(f => f.EntityType == EntityType.ContractStep && f.IsRequired && f.IsActive && !f.IsDeleted)
+        .ToListAsync(ct);
+
+    var requiredFieldIds = candidateFields
+        .Where(f => ParseStepIdFromConfig(f.Config) == stepId)
+        .Select(f => f.Id)
+        .ToList();
+
+    if (requiredFieldIds.Count == 0)
+        return false;
+
+    var filledCount = await _db.EntityCustomField_Entity 
+        .CountAsync(v =>
+            v.EntityId == contractId &&
+            requiredFieldIds.Contains(v.EntityCustomFieldId) &&
+            v.Value != null && v.Value != "", ct);
+
+    return filledCount < requiredFieldIds.Count;
+}
+
+private static Guid? ParseStepIdFromConfig(string? configJson)
+{
+    if (string.IsNullOrWhiteSpace(configJson))
+        return null;
+
+    try
+    {
+        using var doc = System.Text.Json.JsonDocument.Parse(configJson);
+        if (doc.RootElement.TryGetProperty("contractTypeStepId", out var prop) &&
+            Guid.TryParse(prop.GetString(), out var id))
+        {
+            return id;
+        }
+    }
+    catch
+    {
+        // JSON نامعتبر → نادیده گرفته می‌شه
+    }
+
+    return null;
 }
 private static string? GetContractorName(Contractor? contractor)
 {

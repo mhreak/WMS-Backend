@@ -6,7 +6,7 @@ namespace WMS.Domain.Entities.CustomFields;
 /// <summary>
 /// جدول واسط: مقدار یک فیلد سفارشی برای یک entity مشخص
 /// </summary>
-public class EntityCustomFieldValue
+public class EntityCustomField_Entity
 {
     [Required]
     public Guid EntityCustomFieldId { get; set; }

@@ -4,6 +4,8 @@ using WMS.API.Constants;
 using WMS.API.Helpers;
 using WMS.Application.Administrator.Contractors.DTOs;
 using WMS.Application.Administrator.Contractors.Interfaces;
+using WMS.Application.Administrator.CustomFields.DTOs;
+using WMS.Application.Administrator.CustomFields.Interfaces;
 using WMS.Application.Common.Localization;
 
 namespace WMS.API.Controllers.Admin;
@@ -15,11 +17,13 @@ public class AdminContractorController : AdminBaseController
 {
     private readonly IContractorService _service;
     private readonly IResponseLocalizer _localizer;
+    private readonly IStepCustomFieldService _stepCustomFieldService;
 
-    public AdminContractorController(IContractorService service, IResponseLocalizer localizer)
+    public AdminContractorController(IContractorService service, IResponseLocalizer localizer, IStepCustomFieldService stepCustomFieldService)
     {
         _service = service;
         _localizer = localizer;
+        _stepCustomFieldService = stepCustomFieldService;
     }
 
     [HttpGet]
@@ -67,6 +71,21 @@ public class AdminContractorController : AdminBaseController
     {
         await _service.ToggleActiveAsync(id, ct);
         var message = await _localizer.LocalizeAsync(MessageKeys.ContractorStatusToggled);
+        return Ok(ApiResult.Success(message));
+    }
+    [HttpGet("{contractId:guid}/steps/{stepId:guid}/custom-fields")]
+    public async Task<IActionResult> GetStepCustomFields(Guid contractId, Guid stepId, CancellationToken ct)
+    {
+        var result = await _stepCustomFieldService.GetStepFieldsAsync(contractId, stepId, ct);
+        var message = await _localizer.LocalizeAsync(MessageKeys.ContractStepCustomFieldsRetrieved);
+        return Ok(ApiResult.Success(result, message));
+    }
+
+    [HttpPut("{contractId:guid}/steps/{stepId:guid}/custom-fields")]
+    public async Task<IActionResult> SetStepCustomFields(Guid contractId, Guid stepId, [FromBody] SetStepCustomFieldsRequest request, CancellationToken ct)
+    {
+        await _stepCustomFieldService.SetStepFieldsAsync(contractId, stepId, request, ct);
+        var message = await _localizer.LocalizeAsync(MessageKeys.ContractStepCustomFieldsUpdated);
         return Ok(ApiResult.Success(message));
     }
 }

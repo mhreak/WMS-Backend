@@ -25,6 +25,6 @@ public class EntityCustomField : BaseEntity
     /// </summary>
     public bool IsRequired { get; set; } = false;
 
-    public virtual ICollection<EntityCustomFieldValue> Values { get; set; }
-        = new List<EntityCustomFieldValue>();
+    public virtual ICollection<EntityCustomField_Entity> Values { get; set; }
+        = new List<EntityCustomField_Entity>();
 }

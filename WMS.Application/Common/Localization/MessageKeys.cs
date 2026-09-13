@@ -205,4 +205,16 @@ public const string InvalidEntityTypeForNotification = "InvalidEntityTypeForNoti
 public const string InvalidFieldIndicatorForEntity = "InvalidFieldIndicatorForEntity";
 public const string MandatoryStepCannotBeSkipped = "MandatoryStepCannotBeSkipped";
 
+public const string ContractStepCustomFieldsRetrieved = "ContractStepCustomFieldsRetrieved";
+public const string ContractStepCustomFieldsUpdated = "ContractStepCustomFieldsUpdated";
+
+public const string EntityCustomFieldNotFound = "EntityCustomFieldNotFound";
+public const string EntityCustomFieldCreated = "EntityCustomFieldCreated";
+public const string EntityCustomFieldUpdated = "EntityCustomFieldUpdated";
+public const string EntityCustomFieldDeleted = "EntityCustomFieldDeleted";
+
+public const string EntityCustomFieldValueNotFound = "EntityCustomFieldValueNotFound";
+public const string EntityCustomFieldValueCreated = "EntityCustomFieldValueCreated";
+public const string RequiredCustomFieldsMissingOnStep = "RequiredCustomFieldsMissingOnStep";
+
 }

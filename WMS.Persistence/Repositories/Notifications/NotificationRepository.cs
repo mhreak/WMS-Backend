@@ -84,9 +84,9 @@ public class NotificationRepository : INotificationRepository
             .Where(x => !x.IsDeleted)
             .ToListAsync(ct);
     }
-    public async Task<List<EntityCustomFieldValue>> GetCustomFieldValuesAsync(Guid entityCustomFieldId, CancellationToken ct = default)
+    public async Task<List<EntityCustomField_Entity>> GetCustomFieldValuesAsync(Guid entityCustomFieldId, CancellationToken ct = default)
 {
-    return await _db.Set<EntityCustomFieldValue>()
+    return await _db.Set<EntityCustomField_Entity>()
         .AsNoTracking()
         .Where(x => x.EntityCustomFieldId == entityCustomFieldId && !string.IsNullOrEmpty(x.Value))
         .ToListAsync(ct);

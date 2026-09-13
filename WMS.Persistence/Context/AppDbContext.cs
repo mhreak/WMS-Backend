@@ -41,7 +41,7 @@ public class AppDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
     public DbSet<ExtraOrDeductionRule> ExtraOrDeductionRule => Set<ExtraOrDeductionRule>();
     public DbSet<Notification> Notifications => Set<Notification>();
     public DbSet<EntityCustomField> EntityCustomField => Set<EntityCustomField>();
-    public DbSet<EntityCustomFieldValue> EntityCustomField_Entity => Set<EntityCustomFieldValue>();
+    public DbSet<EntityCustomField_Entity > EntityCustomField_Entity => Set<EntityCustomField_Entity>();
     public DbSet<ContractorStatementExtraOrDeduction> ContractorStatementExtraOrDeduction => Set<ContractorStatementExtraOrDeduction>();
     protected override void OnModelCreating(ModelBuilder builder)
     {

@@ -19,6 +19,9 @@ using WMS.Application.Administrator.Statements.Services;
 using WMS.Application.Common.File.Services;
 using WMS.Application.Administrator.Notifications.Interfaces;
 using WMS.Application.Administrator.Notifications.Services;
+using WMS.Application.Administrator.CustomFields.Interfaces;
+using WMS.Persistence.Repositories.CustomFields;
+using WMS.Application.Administrator.CustomFields.Services;
 
 namespace WMS.API.DependencyInjection;
 
@@ -44,6 +47,8 @@ public static class CoreApplicationServiceDependencyInjection
         services.AddScoped<IContractorStatementService, ContractorStatementService>();
         services.AddScoped<IImageThumbnailService, ImageThumbnailService>();
         services.AddScoped<INotificationService, NotificationService>();
+        services.AddScoped<IEntityCustomFieldRepository, EntityCustomFieldRepository>();
+        services.AddScoped<IStepCustomFieldService, StepCustomFieldService>();
         return services;
     }
 }

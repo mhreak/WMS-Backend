@@ -4,9 +4,9 @@ using WMS.Domain.Entities.CustomFields;
 
 namespace WMS.Persistence.Configurations.CustomFields;
 
-public class EntityCustomFieldValueConfiguration : IEntityTypeConfiguration<EntityCustomFieldValue>
+public class EntityCustomFieldValueConfiguration : IEntityTypeConfiguration<EntityCustomField_Entity>
 {
-    public void Configure(EntityTypeBuilder<EntityCustomFieldValue> builder)
+    public void Configure(EntityTypeBuilder<EntityCustomField_Entity> builder)
     {
         builder.ToTable("EntityCustomField_Entity");
 

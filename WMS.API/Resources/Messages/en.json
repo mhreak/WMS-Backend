@@ -145,8 +145,13 @@
   "NotificationTitleRequired": "Notification title is required.",
   "NotificationFieldIndicatorRequired": "Field indicator is required.",
   "InvalidEntityTypeForNotification": "Invalid entity type for notification.",
-  "InvalidFieldIndicatorForEntity": "Invalid field indicator for this entity type."
-
-
+  "InvalidFieldIndicatorForEntity": "Invalid field indicator for this entity type." ,
+  "ContractStepCustomFieldsRetrieved": "Contract step custom fields retrieved.",
+  "ContractStepCustomFieldsUpdated": "Contract step custom fields updated.",
+  "EntityCustomFieldNotFound": "Entity custom field not found.",
+  "EntityCustomFieldCreated": "Entity custom field created successfully.",
+  "EntityCustomFieldUpdated": "Entity custom field updated successfully.",
+  "EntityCustomFieldDeleted": "Entity custom field deleted successfully.",
+  "MandatoryStepCannotBeSkipped": "One of the steps in the path is mandatory and cannot be skipped."
 
 }

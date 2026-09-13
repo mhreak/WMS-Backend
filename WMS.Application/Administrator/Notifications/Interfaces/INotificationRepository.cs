@@ -13,7 +13,7 @@ public interface INotificationRepository
     Task<List<Notification>> GetActiveAsync(CancellationToken ct = default);
     Task AddAsync(Notification entity, CancellationToken ct = default);
     Task UpdateAsync(Notification entity, CancellationToken ct = default);
-    Task<List<EntityCustomFieldValue>> GetCustomFieldValuesAsync(Guid entityCustomFieldId, CancellationToken ct = default);
+    Task<List<EntityCustomField_Entity>> GetCustomFieldValuesAsync(Guid entityCustomFieldId, CancellationToken ct = default);
 
     // برای Evaluate
     Task<List<Contract>> GetContractsAsync(CancellationToken ct = default);

@@ -184,6 +184,12 @@
   "NotificationFieldIndicatorRequired": "شاخص فیلد الزامی است.",
   "InvalidEntityTypeForNotification": "نوع موجودیت برای نوتیفیکیشن معتبر نیست.",
   "InvalidFieldIndicatorForEntity": "شاخص فیلد برای این نوع موجودیت معتبر نیست.",
-  "MandatoryStepCannotBeSkipped": "یکی از مراحل بین مسیر اجباری است و نمی‌توان از آن رد شد."
+  "MandatoryStepCannotBeSkipped": "یکی از مراحل بین مسیر اجباری است و نمی‌توان از آن رد شد.",
+  "ContractStepCustomFieldsRetrieved": "فیلدهای سفارشی مرحله قرارداد دریافت شد.",
+  "ContractStepCustomFieldsUpdated": "فیلدهای سفارشی مرحله قرارداد به‌روز شد.",
+  "EntityCustomFieldNotFound": "فیلد سفارشی موجودیت یافت نشد.",
+  "EntityCustomFieldCreated": "فیلد سفارشی موجودیت با موفقیت ایجاد شد.",
+  "EntityCustomFieldUpdated": "فیلد سفارشی موجودیت با موفقیت به‌روزرسانی شد.",
+  "EntityCustomFieldDeleted": "فیلد سفارشی موجودیت با موفقیت حذف شد."
 
 }
