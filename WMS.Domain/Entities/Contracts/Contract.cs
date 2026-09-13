@@ -46,9 +46,10 @@ public class Contract : BaseEntity
     [ForeignKey(nameof(FileId))]
     public virtual FileAsset? File { get; set; }
 
-    /// <summary>فایل پیوست قرارداد (اختیاری)</summary>
-    public Guid? AttachmentFileId { get; set; }
+    public Guid? Attachmentid { get; set; }
 
-    [ForeignKey(nameof(AttachmentFileId))]
-    public virtual FileAsset? AttachmentFile { get; set; }
+    [ForeignKey(nameof(Attachmentid))]
+    public virtual FileAsset? Attachment { get; set; }
+
+
 }

@@ -21,7 +21,7 @@ public class CreateContractRequest
     public bool IsActive { get; set; } = true;
     public Guid? ContractTypeStateId { get; set; }
     public Guid? FileId { get; set; }
-    public Guid? AttachmentFileId { get; set; }
+    public Guid? Attachmentid { get; set; }
 }
 
 public class UpdateContractRequest
@@ -40,7 +40,7 @@ public class UpdateContractRequest
     public List<Guid>? CategoryIds { get; set; }
     public Guid? ContractTypeStateId { get; set; }
     public Guid? FileId { get; set; }
-    public Guid? AttachmentFileId { get; set; }
+    public Guid? Attachmentid { get; set; }
 }
 
 public class FileInfoDto
@@ -87,8 +87,8 @@ public class ContractDto
     public Guid? FileId { get; set; }
     public FileInfoDto? File { get; set; }
 
-    public Guid? AttachmentFileId { get; set; }
-    public FileInfoDto? AttachmentFile { get; set; }
+    public Guid? Attachmentid { get; set; }
+    public FileInfoDto? Attachment { get; set; }
 }
 public class ContractFilterRequest
 {
