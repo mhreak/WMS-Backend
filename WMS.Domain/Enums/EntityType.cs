@@ -8,5 +8,6 @@ public enum EntityType
 
     ContreacTypeStep = 4,
     
-    ContractorStatement =5
+    ContractorStatement =5,
+    EntityCustomField = 6
 }

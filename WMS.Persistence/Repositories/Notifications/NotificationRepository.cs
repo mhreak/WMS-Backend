@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using WMS.Application.Administrator.Notifications.Interfaces;
 using WMS.Domain.Entities.Contracts;
+using WMS.Domain.Entities.CustomFields;
 using WMS.Domain.Entities.Notifications;
 using WMS.Domain.Entities.Statements;
 using WMS.Persistence.Context;
@@ -83,4 +84,11 @@ public class NotificationRepository : INotificationRepository
             .Where(x => !x.IsDeleted)
             .ToListAsync(ct);
     }
+    public async Task<List<EntityCustomFieldValue>> GetCustomFieldValuesAsync(Guid entityCustomFieldId, CancellationToken ct = default)
+{
+    return await _db.Set<EntityCustomFieldValue>()
+        .AsNoTracking()
+        .Where(x => x.EntityCustomFieldId == entityCustomFieldId && !string.IsNullOrEmpty(x.Value))
+        .ToListAsync(ct);
+}
 }

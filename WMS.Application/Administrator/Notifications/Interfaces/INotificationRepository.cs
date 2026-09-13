@@ -1,5 +1,6 @@
 // WMS.Application/Administrator/Notifications/Interfaces/INotificationRepository.cs
 using WMS.Domain.Entities.Contracts;
+using WMS.Domain.Entities.CustomFields;
 using WMS.Domain.Entities.Notifications;
 using WMS.Domain.Entities.Statements;
 
@@ -12,6 +13,7 @@ public interface INotificationRepository
     Task<List<Notification>> GetActiveAsync(CancellationToken ct = default);
     Task AddAsync(Notification entity, CancellationToken ct = default);
     Task UpdateAsync(Notification entity, CancellationToken ct = default);
+    Task<List<EntityCustomFieldValue>> GetCustomFieldValuesAsync(Guid entityCustomFieldId, CancellationToken ct = default);
 
     // برای Evaluate
     Task<List<Contract>> GetContractsAsync(CancellationToken ct = default);

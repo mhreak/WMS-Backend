@@ -25,6 +25,8 @@ public class NotificationService : INotificationService
     private static readonly string[] AllowedFieldsForStatement =
         { "StatementDate" };
 
+    private static readonly string[] AllowedFieldsForEntityCustomField = { "CustomFieldValue" };    
+
     public NotificationService(INotificationRepository repo, IUnitOfWork uow)
     {
         _repo = repo;
@@ -117,6 +119,7 @@ public class NotificationService : INotificationService
                 EntityType.Contract => await EvaluateContractsAsync(notif, today, ct),
                 EntityType.ContractStep => await EvaluateContractStepsAsync(notif, today, ct),
                 EntityType.ContractorStatement => await EvaluateStatementsAsync(notif, today, ct),
+                EntityType.EntityCustomField => await EvaluateEntityCustomFieldsAsync(notif, today, ct),
                 _ => new List<NotificationResultDto>()
             };
 
@@ -271,6 +274,7 @@ public class NotificationService : INotificationService
             EntityType.Contract => AllowedFieldsForContract,
             EntityType.ContractStep => AllowedFieldsForContractStep,
             EntityType.ContractorStatement => AllowedFieldsForStatement,
+             EntityType.EntityCustomField => AllowedFieldsForEntityCustomField,
             _ => Array.Empty<string>()
         };
 
@@ -293,4 +297,58 @@ public class NotificationService : INotificationService
         Config = e.Config,
         CreatedAt = e.CreatedAt
     };
+
+    private async Task<List<NotificationResultDto>> EvaluateEntityCustomFieldsAsync(
+    Notification notif, DateOnly today, CancellationToken ct)
+{
+    var list = new List<NotificationResultDto>();
+
+    var fieldId = ParseEntityCustomFieldId(notif.Config);
+    if (fieldId is null)
+        return list;
+
+    var values = await _repo.GetCustomFieldValuesAsync(fieldId.Value, ct);
+    if (values.Count == 0)
+        return list;
+
+    var contracts = await _repo.GetContractsAsync(ct);
+    var contractsById = contracts.ToDictionary(c => c.Id);
+
+    foreach (var v in values)
+    {
+        if (!DateOnly.TryParse(v.Value, out var parsedDate))
+            continue; // مقدار فیلد تاریخ معتبر نیست، رد شو
+
+        contractsById.TryGetValue(v.EntityId, out var contract);
+        var title = contract?.Title ?? v.EntityId.ToString();
+
+        var item = BuildResult(notif, parsedDate, v.EntityId, title, today);
+        if (item != null)
+            list.Add(item);
+    }
+
+    return list;
+}
+
+private static Guid? ParseEntityCustomFieldId(string? configJson)
+{
+    if (string.IsNullOrWhiteSpace(configJson))
+        return null;
+
+    try
+    {
+        using var doc = System.Text.Json.JsonDocument.Parse(configJson);
+        if (doc.RootElement.TryGetProperty("entityCustomFieldId", out var prop) &&
+            Guid.TryParse(prop.GetString(), out var id))
+        {
+            return id;
+        }
+    }
+    catch
+    {
+        // JSON نامعتبر → نادیده گرفته می‌شه، Exception نمی‌ده
+    }
+
+    return null;
+}
 }
