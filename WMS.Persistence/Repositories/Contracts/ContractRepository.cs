@@ -35,7 +35,7 @@ public class ContractRepository : IContractRepository
             .ThenInclude(cs => cs.Step)
             .Include(x => x.ContractTypeState)
             .Include(x => x.File)
-            .Include(x => x.AttachmentFile)
+            .Include(x => x.Attachment)
             .FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted, ct);
     }
 
