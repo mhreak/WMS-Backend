@@ -25,7 +25,7 @@ public class NotificationService : INotificationService
     private static readonly string[] AllowedFieldsForStatement =
         { "StatementDate" };
 
-    private static readonly string[] AllowedFieldsForEntityCustomField = { "CustomFieldValue" };    
+    private static readonly string[] AllowedFieldsForEntityCustomField = { "CustomFieldValue" , "CustomField" };    
 
     public NotificationService(INotificationRepository repo, IUnitOfWork uow)
     {
@@ -206,7 +206,7 @@ public class NotificationService : INotificationService
     /// <summary>
     /// ساخت نتیجه بر اساس Minutes مثبت/منفی
     /// </summary>
-    private static NotificationResultDto? BuildResult(
+        private static NotificationResultDto? BuildResult(
         Notification notif,
         DateOnly? entityDate,
         Guid entityId,
@@ -216,41 +216,28 @@ public class NotificationService : INotificationService
         if (entityDate is null)
             return null;
 
-        // دقیقه → روز (تقریب)
+        // فرانت همیشه 30 روز کم می‌کند — این جبران همان باگ است
+        const int FrontendSubtractDays = 30;
+
         var offsetDays = notif.Minutes / (24 * 60);
-        var targetDate = entityDate.Value.AddDays(offsetDays);
-        var diff = targetDate.DayNumber - today.DayNumber; // >0 هنوز نرسیده | <0 گذشته
+        var alertFrom = entityDate.Value.AddDays(offsetDays);
 
-        string daysType;
-        int days;
+        // فاصله واقعی نسبت به تاریخ entity
+        var daysFromEntity = today.DayNumber - entityDate.Value.DayNumber;
 
-        if (notif.Minutes >= 0)
-        {
-            // بعد از تاریخ مرجع → روز مانده تا target
-            daysType = "remaining";
-            days = diff;
+        // هنوز وارد بازه هشدار نشده
+        if (today < alertFrom)
+            return null;
 
-            // فقط مواردی که موعد رسیده یا گذشته (diff <= 0)
-            // اگر می‌خواهی همه را نشان بدهی این if را بردار
-            if (diff > 0)
-                return null;
-        }
-        else
-        {
-            // قبل از تاریخ مرجع → روز گذشته از target
-            daysType = "past";
-            days = -diff;
-
-            // فقط وقتی از target گذشته باشیم
-            if (diff > 0)
-                return null;
-        }
+        var realDays = Math.Abs(daysFromEntity);
+        var daysType = daysFromEntity >= 0 ? "past" : "remaining";
 
         return new NotificationResultDto
         {
             NotificationId = notif.Id,
             Title = notif.Title,
-            Days = Math.Abs(days),
+            // +30 تا فرانت با -30 عدد درست را نشان دهد
+            Days = realDays + FrontendSubtractDays,
             DaysType = daysType,
             EntityDate = entityDate.Value,
             EntityTitle = entityTitle,
