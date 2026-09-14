@@ -34,10 +34,32 @@ public class GlobalExceptionMiddleware
             string message;
             object? errors = null;
 
-            if (ex is BadRequestException badRequest)
+           if (ex is BadRequestException badRequest)
             {
                 statusCode = StatusCodes.Status400BadRequest;
-                message = await localizer.LocalizeAsync(badRequest.Message, badRequest.Args);
+
+                if (badRequest.ErrorCode == "REQUIRED_CUSTOM_FIELDS_MISSING")
+                {
+                    message = await localizer.LocalizeAsync(badRequest.Message);
+                    errors = new
+                    {
+                        errorCode = badRequest.ErrorCode,
+                        details = badRequest.Args.Length > 0 ? badRequest.Args[0] : null
+                    };
+                }
+                else
+                {
+                    message = await localizer.LocalizeAsync(badRequest.Message, badRequest.Args);
+
+                    if (!string.IsNullOrEmpty(badRequest.ErrorCode) || badRequest.Args.Length > 0)
+                    {
+                        errors = new
+                        {
+                            errorCode = badRequest.ErrorCode,
+                            details = badRequest.Args.Length > 0 ? badRequest.Args[0] : null
+                        };
+                    }
+                }
             }
             else if (ex is UnauthorizedAccessException)
             {

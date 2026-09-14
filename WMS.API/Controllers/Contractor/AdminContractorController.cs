@@ -73,19 +73,5 @@ public class AdminContractorController : AdminBaseController
         var message = await _localizer.LocalizeAsync(MessageKeys.ContractorStatusToggled);
         return Ok(ApiResult.Success(message));
     }
-    [HttpGet("{contractId:guid}/steps/{stepId:guid}/custom-fields")]
-    public async Task<IActionResult> GetStepCustomFields(Guid contractId, Guid stepId, CancellationToken ct)
-    {
-        var result = await _stepCustomFieldService.GetStepFieldsAsync(contractId, stepId, ct);
-        var message = await _localizer.LocalizeAsync(MessageKeys.ContractStepCustomFieldsRetrieved);
-        return Ok(ApiResult.Success(result, message));
-    }
 
-    [HttpPut("{contractId:guid}/steps/{stepId:guid}/custom-fields")]
-    public async Task<IActionResult> SetStepCustomFields(Guid contractId, Guid stepId, [FromBody] SetStepCustomFieldsRequest request, CancellationToken ct)
-    {
-        await _stepCustomFieldService.SetStepFieldsAsync(contractId, stepId, request, ct);
-        var message = await _localizer.LocalizeAsync(MessageKeys.ContractStepCustomFieldsUpdated);
-        return Ok(ApiResult.Success(message));
-    }
 }

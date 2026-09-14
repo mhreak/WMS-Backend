@@ -26,8 +26,32 @@ public class ControllerExceptionFilterAttribute : ExceptionFilterAttribute
         if (context.Exception is BadRequestException badRequest)
         {
             statusCode = StatusCodes.Status400BadRequest;
-            message = localizer.LocalizeAsync(badRequest.Message, badRequest.Args).GetAwaiter().GetResult();
-        }
+
+            // اگر جزئیات کاستوم‌فیلد است، Args را به localizer نده (object پیچیده است)
+        if (badRequest.ErrorCode == "REQUIRED_CUSTOM_FIELDS_MISSING")
+                {
+                    message = localizer.LocalizeAsync(badRequest.Message).GetAwaiter().GetResult();
+                    errors = new
+                    {
+                        errorCode = badRequest.ErrorCode,
+                        details = badRequest.Args.Length > 0 ? badRequest.Args[0] : null
+                    };
+                }
+                else
+                {
+                    message = localizer.LocalizeAsync(badRequest.Message, badRequest.Args)
+                        .GetAwaiter().GetResult();
+
+                    if (!string.IsNullOrEmpty(badRequest.ErrorCode) || badRequest.Args.Length > 0)
+                    {
+                        errors = new
+                        {
+                            errorCode = badRequest.ErrorCode,
+                            details = badRequest.Args.Length > 0 ? badRequest.Args[0] : null
+                        };
+                    }
+                }
+            }
         else if (context.Exception is UnauthorizedAccessException)
         {
             statusCode = StatusCodes.Status401Unauthorized;

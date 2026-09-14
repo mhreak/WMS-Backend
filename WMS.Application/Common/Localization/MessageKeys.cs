@@ -215,7 +215,7 @@ public const string EntityCustomFieldDeleted = "EntityCustomFieldDeleted";
 
 public const string EntityCustomFieldValueNotFound = "EntityCustomFieldValueNotFound";
 public const string EntityCustomFieldValueCreated = "EntityCustomFieldValueCreated";
-public const string RequiredCustomFieldsMissingOnStep = "RequiredCustomFieldsMissingOnStep";
+public const string RequiredCustomFieldsMissingOnStep = "برای گذر از این مرحله، پر کردن فیلدهای سفارشی الزامی است. لطفاً فیلدهای مورد نیاز را تکمیل کنید.";
 public const string StepCustomFieldsRetrieved = "StepCustomFieldsRetrieved";
 
 }
