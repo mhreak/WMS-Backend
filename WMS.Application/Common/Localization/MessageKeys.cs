@@ -216,5 +216,6 @@ public const string EntityCustomFieldDeleted = "EntityCustomFieldDeleted";
 public const string EntityCustomFieldValueNotFound = "EntityCustomFieldValueNotFound";
 public const string EntityCustomFieldValueCreated = "EntityCustomFieldValueCreated";
 public const string RequiredCustomFieldsMissingOnStep = "RequiredCustomFieldsMissingOnStep";
+public const string StepCustomFieldsRetrieved = "StepCustomFieldsRetrieved";
 
 }

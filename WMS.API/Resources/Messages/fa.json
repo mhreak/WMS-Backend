@@ -190,6 +190,10 @@
   "EntityCustomFieldNotFound": "فیلد سفارشی موجودیت یافت نشد.",
   "EntityCustomFieldCreated": "فیلد سفارشی موجودیت با موفقیت ایجاد شد.",
   "EntityCustomFieldUpdated": "فیلد سفارشی موجودیت با موفقیت به‌روزرسانی شد.",
-  "EntityCustomFieldDeleted": "فیلد سفارشی موجودیت با موفقیت حذف شد."
+  "EntityCustomFieldDeleted": "فیلد سفارشی موجودیت با موفقیت حذف شد.",
+  "EntityCustomFieldValueNotFound": "مقدار فیلد سفارشی موجودیت یافت نشد.",
+  "EntityCustomFieldValueCreated": "مقدار فیلد سفارشی موجودیت با موفقیت ایجاد شد.",
+  "RequiredCustomFieldsMissingOnStep": "برخی از فیلدهای سفارشی اجباری برای این مرحله پر نشده‌اند. لطفاً قبل از ادامه، فیلدهای مورد نیاز را تکمیل کنید.",
+  "StepCustomFieldsRetrieved": "فیلدهای سفارشی مرحله با موفقیت دریافت شد."
 
 }

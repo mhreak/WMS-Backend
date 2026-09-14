@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using WMS.API.Constants;
 using WMS.API.Helpers;
 using WMS.Application.Administrator.ContractTypeSteps.DTOs;
+using WMS.Application.Administrator.CustomFields.Interfaces;
 using WMS.Application.Administrator.Steps.Interfaces;
 using WMS.Application.Common.Localization;
 
@@ -16,10 +17,13 @@ public class AdminStepController : AdminBaseController
     private readonly IStepService _service;
     private readonly IResponseLocalizer _localizer;
 
-    public AdminStepController(IStepService service, IResponseLocalizer localizer)
+    private readonly IStepCustomFieldService _stepCustomFieldService;
+
+    public AdminStepController(IStepService service, IResponseLocalizer localizer, IStepCustomFieldService stepCustomFieldService)
     {
         _service = service;
         _localizer = localizer;
+        _stepCustomFieldService = stepCustomFieldService;
     }
 
     [HttpGet]
@@ -79,5 +83,13 @@ public class AdminStepController : AdminBaseController
         await _service.ToggleActiveAsync(id, ct);
         var message = await _localizer.LocalizeAsync(MessageKeys.StepStatusToggled);
         return Ok(ApiResult.Success(message));
+    }
+    [HttpGet("{stepId:guid}/custom-fields")]
+    public async Task<IActionResult> GetStepCustomFields(Guid stepId, CancellationToken ct)
+    {
+        var result = await _stepCustomFieldService.GetFieldsByStepIdAsync(stepId, ct);
+        var message = await _localizer.LocalizeAsync(MessageKeys.StepCustomFieldsRetrieved);
+        return Ok(ApiResult.Success(result, message));
+        
     }
 }

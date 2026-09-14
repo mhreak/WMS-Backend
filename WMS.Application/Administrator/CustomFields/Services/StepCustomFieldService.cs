@@ -79,4 +79,18 @@ public class StepCustomFieldService : IStepCustomFieldService
     {
         public Guid? ContractTypeStepId { get; set; }
     }
+
+    public async Task<List<StepCustomFieldDefinitionDto>> GetFieldsByStepIdAsync(Guid stepId, CancellationToken ct = default)
+{
+    var allFields = await _repo.GetByEntityTypeAsync(EntityType.ContractStep, ct);
+    var stepFields = FilterByStepId(allFields, stepId);
+
+    return stepFields.Select(f => new StepCustomFieldDefinitionDto
+    {
+        EntityCustomFieldId = f.Id,
+        FieldName = f.FieldName,
+        FieldType = f.FieldType,
+        IsRequired = f.IsRequired
+    }).ToList();
+}
 }

@@ -152,6 +152,8 @@
   "EntityCustomFieldCreated": "Entity custom field created successfully.",
   "EntityCustomFieldUpdated": "Entity custom field updated successfully.",
   "EntityCustomFieldDeleted": "Entity custom field deleted successfully.",
-  "MandatoryStepCannotBeSkipped": "One of the steps in the path is mandatory and cannot be skipped."
+  "MandatoryStepCannotBeSkipped": "One of the steps in the path is mandatory and cannot be skipped." ,
+  "RequiredCustomFieldsMissingOnStep": "Some of the required custom fields for this step are not filled. Please complete the required fields before proceeding.",
+  "StepCustomFieldsRetrieved": "Step custom fields retrieved successfully."
 
 }

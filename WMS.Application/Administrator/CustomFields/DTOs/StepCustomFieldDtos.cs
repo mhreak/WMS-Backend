@@ -19,3 +19,11 @@ public class StepCustomFieldItemRequest
     public Guid EntityCustomFieldId { get; set; }
     public string? Value { get; set; }
 }
+
+public class StepCustomFieldDefinitionDto
+{
+    public Guid EntityCustomFieldId { get; set; }
+    public string FieldName { get; set; } = string.Empty;
+    public Domain.Enums.CustomFieldType FieldType { get; set; }
+    public bool IsRequired { get; set; }
+}
