@@ -272,7 +272,17 @@ public async Task MoveStepAsync(
 
         var blockedStep = skippedSteps.FirstOrDefault(s => s.IsMandatory);
         if (blockedStep != null)
-            throw new BadRequestException(MessageKeys.MandatoryStepCannotBeSkipped);
+{
+            throw new BadRequestException(
+                MessageKeys.MandatoryStepCannotBeSkipped,
+                "MANDATORY_STEP_CANNOT_BE_SKIPPED",
+                new
+                {
+                    stepId = blockedStep.Id,
+                    stepTitle = blockedStep.Title,
+                    stepOrder = blockedStep.StepOrder
+                });
+        }
 
         // فیلدهای اجباری مراحل میانی
         foreach (var step in skippedSteps)

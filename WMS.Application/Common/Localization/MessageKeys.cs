@@ -203,7 +203,7 @@ public const string NotificationTitleRequired = "NotificationTitleRequired";
 public const string NotificationFieldIndicatorRequired = "NotificationFieldIndicatorRequired";
 public const string InvalidEntityTypeForNotification = "InvalidEntityTypeForNotification";
 public const string InvalidFieldIndicatorForEntity = "InvalidFieldIndicatorForEntity";
-public const string MandatoryStepCannotBeSkipped = "MandatoryStepCannotBeSkipped";
+public const string MandatoryStepCannotBeSkipped = "مراحل اجباری را نمیتوان رد کرد ";
 
 public const string ContractStepCustomFieldsRetrieved = "ContractStepCustomFieldsRetrieved";
 public const string ContractStepCustomFieldsUpdated = "ContractStepCustomFieldsUpdated";
