@@ -20,6 +20,18 @@ public class EntityCustomField : BaseEntity
 
     public bool IsActive { get; set; } = true;
 
+    [Required]
+    public short Form_ShowOrder { get; set; }
+
+    [Required]
+    public short Filter_ShowOrder { get; set; }
+
+    [Required]
+    public bool ShowInGrid { get; set; }
+
+    [Required]
+    public short Grid_ShowOrder { get; set; }
+
     /// <summary>
     /// اگر true باشد، پر کردن این فیلد برای entity الزامی است
     /// </summary>

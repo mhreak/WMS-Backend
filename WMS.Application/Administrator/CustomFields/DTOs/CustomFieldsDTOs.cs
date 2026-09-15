@@ -27,6 +27,10 @@ public class EntityCustomFieldDto
     public CustomFieldType FieldType { get; set; }
     public string? Config { get; set; }
     public bool IsActive { get; set; }
+    public short Form_ShowOrder { get; set; }
+    public short Filter_ShowOrder { get; set; }
+    public bool ShowInGrid { get; set; }
+    public short Grid_ShowOrder { get; set; }
     public bool IsRequired { get; set; }             // جدید
     public DateTime CreatedAt { get; set; }
 }

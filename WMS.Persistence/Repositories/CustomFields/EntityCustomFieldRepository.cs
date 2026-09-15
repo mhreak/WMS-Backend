@@ -16,6 +16,7 @@ public class EntityCustomFieldRepository : IEntityCustomFieldRepository
         return await _db.EntityCustomField
             .AsNoTracking()
             .Where(x => x.EntityType == entityType && x.IsActive && !x.IsDeleted)
+            .OrderBy(x => x.Form_ShowOrder)
             .ToListAsync(ct);
     }
 
